@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {spawnSync} from 'node:child_process';
+import {spawn, spawnSync} from 'node:child_process';
 
 const defaultCommand = 'node';
 
@@ -22,6 +22,7 @@ const defaultCommand = 'node';
  * @property {string} stdout - The `stdout` buffer as a trimmed string.
  * @property {string} stderr - The `stderr` buffer as a trimmed string.
  * @property {number} exitCode - The command's exit code.
+ * @property {Error} error - The error if the command failed to execute.
  */
 
 /**
@@ -45,7 +46,9 @@ const defaultCommand = 'node';
  */
 
 /**
- * Spawns child process synchronously. Does not throw.
+ * Spawns child process. Does not throw. This function can be used to either
+ * return a {Result} synchronously or to asynchronously call a callback with a
+ * {Result}.
  * @param {string | string[]} cmd - Command file (pathname).
  * @param {string[] | {}} [args] - Command arguments.
  * @param {ExecOptions | Callback} [options] - Options for executing command.
@@ -64,29 +67,48 @@ export function execNode(cmd, args, options, cb) {
   const command = [cmd, ...args].join(' ').trim();
   let resultObject;
 
-  try {
-    const result = spawnSync(cmd, args, options);
-    resultObject = {
-      command: command,
-      exitCode: result.status,
-      stdout: result.stdout.toString().trim(),
-      stderr: result.stderr.toString().trim(),
-    };
-  } catch (err) {
-    resultObject = {
-      command: command,
-      exitCode: -1,
-      stdout: '',
-      stderr: err.message,
-    };
+  if (cb) {
+    let stdout = '';
+    let stderr = '';
+    const proc = spawn(cmd, args, options);
+    proc.on('close', code => {
+      resultObject = {
+        command: command,
+        exitCode: code,
+        stdout: stdout.trim(),
+        stderr: stderr.trim(),
+      };
+      return cb(resultObject);
+    });
+    proc.stdout.on('data', data => {
+      stdout += data.toString();
+    });
+    proc.stderr.on('data', data => {
+      stderr += data.toString();
+    });
+  } else {
+    try {
+      const result = spawnSync(cmd, args, options);
+      resultObject = {
+        command: command,
+        exitCode: result.status,
+        stdout: result.stdout.toString().trim(),
+        stderr: result.stderr.toString().trim(),
+      };
+    } catch (err) {
+      resultObject = {
+        command: command,
+        exitCode: -1,
+        stdout: '',
+        stderr: err.toString(),
+      };
+    }
+    return resultObject;
   }
-
-  if (cb) return cb(resultObject);
-  return resultObject;
 }
 
 const options = {timeout: 60000};
-const result = execNode(['--version'], options);
+const result = execNode(['experimental/folder/create.mjs'], options);
 if (result.exitCode !== 0) {
   console.error(result.stderr);
   console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
@@ -97,7 +119,7 @@ if (result.exitCode !== 0) {
 }
 
 console.log('test with callback');
-execNode(['--version'], options, result => {
+execNode(['experimental/folders/create.mjs'], options, result => {
   if (result.exitCode !== 0) {
     console.error(result.stderr);
     console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
