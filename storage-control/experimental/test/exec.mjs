@@ -27,17 +27,17 @@ const defaultCommand = 'node';
 
 /**
  * @typedef {object} ExecOptions
- * @param {number} [timeout]
- * @param {string | number} [killSignal]
- * @param {Record<string, string>} [env]
- * @param {string | Buffer}  [input]
- * @param {number} [maxBuffer]
- * @param {string} [encoding]
- * @param {string | URL | TypedArray | DataView} [cwd]
- * @param {string} [argv0]
- * @param {string | Array} [stdio]
- * @param {number} [uid]
- * @param {number} [gid]
+ * @property {number} [timeout]
+ * @property {string | number} [killSignal]
+ * @property {Record<string, string>} [env]
+ * @property {string | Buffer}  [input]
+ * @property {number} [maxBuffer]
+ * @property {string} [encoding]
+ * @property {string | URL | TypedArray | DataView} [cwd]
+ * @property {string} [argv0]
+ * @property {string | Array} [stdio]
+ * @property {number} [uid]
+ * @property {number} [gid]
  */
 
 /**
@@ -53,7 +53,7 @@ const defaultCommand = 'node';
  * @param {string[] | {}} [args] - Command arguments.
  * @param {ExecOptions | Callback} [options] - Options for executing command.
  * @param {Callback} [cb] - Optional callback for inspecting result.
- * @returns {Result}
+ * @returns {Result | ChildProcessWithoutNullStreams}
  */
 export function execNode(cmd, args, options, cb) {
   // cmd is optional, defaults to 'node'
@@ -70,26 +70,69 @@ export function execNode(cmd, args, options, cb) {
   if (cb) {
     let stdout = '';
     let stderr = '';
+    // eslint-disable-next-line no-undef
+    const controller = new AbortController();
+    const {signal} = controller;
+    options.signal = signal;
+    options.killSignal = 'SIGKILL';
+    //options.detached = true;
     const proc = spawn(cmd, args, options);
-    proc.on('close', code => {
+    try {
+      proc.once('error', err => {
+        resultObject = {
+          error: err,
+          command: command,
+          exitCode: -1,
+          stdout: '',
+          stderr: '',
+        };
+        proc.removeAllListeners();
+        proc.stdin.end();
+        proc.stdout.destroy();
+        proc.stderr.destroy();
+        proc.kill('SIGTERM');
+        proc.kill('SIGABRT');
+        proc.kill('SIGINT');
+        proc.kill('SIGKILL');
+        controller.abort();
+        proc.unref();
+        // return cb(resultObject);
+        cb(resultObject);
+        //throw err;
+      });
+      proc.once('close', code => {
+        resultObject = {
+          error: undefined,
+          command: command,
+          exitCode: code,
+          stdout: stdout.trim(),
+          stderr: stderr.trim(),
+        };
+        return cb(resultObject);
+      });
+      proc.stdout.on('data', data => {
+        stdout += data.toString();
+      });
+      proc.stderr.on('data', data => {
+        stderr += data.toString();
+      });
+    } catch (err) {
+      // Should never get here, but just in case.
       resultObject = {
+        error: err,
         command: command,
-        exitCode: code,
-        stdout: stdout.trim(),
-        stderr: stderr.trim(),
+        exitCode: -1,
+        stdout: '',
+        stderr: '',
       };
       return cb(resultObject);
-    });
-    proc.stdout.on('data', data => {
-      stdout += data.toString();
-    });
-    proc.stderr.on('data', data => {
-      stderr += data.toString();
-    });
+    }
+    return proc;
   } else {
     try {
       const result = spawnSync(cmd, args, options);
       resultObject = {
+        error: undefined,
         command: command,
         exitCode: result.status,
         stdout: result.stdout.toString().trim(),
@@ -97,33 +140,54 @@ export function execNode(cmd, args, options, cb) {
       };
     } catch (err) {
       resultObject = {
+        error: err,
         command: command,
         exitCode: -1,
         stdout: '',
-        stderr: err.toString(),
+        stderr: '',
       };
     }
     return resultObject;
   }
 }
 
-const options = {timeout: 60000};
-const result = execNode(['experimental/folder/create.mjs'], options);
-if (result.exitCode !== 0) {
-  console.error(result.stderr);
-  console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-  process.exitCode = result.exitCode;
-} else {
-  console.log(result.stdout);
-  console.log(`PASS: ${result.command}`);
-}
-
-console.log('test with callback');
-execNode(['experimental/folders/create.mjs'], options, result => {
-  if (result.exitCode !== 0) {
+const options = {timeout: 5000};
+//const options = {};
+// const result = execNode(['experimental/folder/create.mjs'], options);
+// if (result.exitCode !== 0) {
+//   console.error(result.stderr);
+//   console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
+//   process.exitCode = result.exitCode;
+// } else {
+//   console.log(result.stdout);
+//   console.log(`PASS: ${result.command}`);
+// }
+//
+// console.log('test with callback');
+//execNode(['experimental/folders/create.mjs'], options, result => {
+execNode('foo', [], options, result => {
+  if (result.error) {
+    console.error(result.error);
+    console.error(`FAIL: failed to exec: '${result.command}'`);
+    //process.exitCode = result.exitCode;
+  } else if (result.exitCode !== 0) {
     console.error(result.stderr);
     console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-    process.exitCode = result.exitCode;
+    //process.exitCode = result.exitCode;
+  } else {
+    console.log(result.stdout);
+    console.log(`PASS: ${result.command}`);
+  }
+});
+execNode(['--version'], options, result => {
+  if (result.error) {
+    console.error(result.error);
+    console.error(`ERROR: failed to exec: '${result.command}'`);
+    //process.exitCode = result.exitCode;
+  } else if (result.exitCode !== 0) {
+    console.error(result.stderr);
+    console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
+    //process.exitCode = result.exitCode;
   } else {
     console.log(result.stdout);
     console.log(`PASS: ${result.command}`);
