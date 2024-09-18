@@ -13,13 +13,26 @@
 // limitations under the License.
 
 import {parseArgs} from 'node:util';
-import {Config} from './config.ts';
 
 export class Args {
-  constructor() {
-    const args = ['path'];
+  samplePath: string;
+
+  parse(args: string[]) {
+    console.log('wtf');
     const options = {};
-    const {values, positionals} = parseArgs({args, options});
-    console.log(values, positionals);
+    // const {values, positionals} = parseArgs({
+    const {positionals} = parseArgs({
+      args,
+      options,
+      allowPositionals: true,
+      strict: true,
+    });
+    // console.log('values:');
+    // console.log(values);
+    if (positionals.length > 1) {
+      throw new Error('too many arguments');
+    }
+    this.samplePath = args[0];
+    console.log(`sample path: ${this.samplePath}`);
   }
 }

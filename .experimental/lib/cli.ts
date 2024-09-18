@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import {inspect} from 'node:util';
+
+import {Args} from './args.ts';
 import {Context} from './context.ts';
 
 export class Cli {
@@ -21,14 +23,19 @@ export class Cli {
   constructor(argv: string[]) {
     const c = new Context();
     c.execPath = argv[0];
-    c.startModule = argv[1];
+    c.mainModule = argv[1];
     c.args = argv.slice(2);
+
+    const args = new Args();
+    args.parse(c.args);
+    console.log(args);
+    c.samplePathArg = args.samplePath;
 
     this.context = c;
   }
 
   run() {
-    console.log(this.toString());
+    console.log(this);
   }
 
   toString() {
@@ -36,6 +43,7 @@ export class Cli {
   }
 
   static run(argv: string[]) {
+    console.log('run');
     const cli = new Cli(argv);
     cli.run();
   }

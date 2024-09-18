@@ -14,10 +14,16 @@
 
 import {Config} from './config.ts';
 
+type SamplePathEnum = 'file' | 'directory';
+
 export class Context {
   config;
 
   execPath: string;
-  startModule: string;
+  mainModule: string;
   args: string[];
+
+  samplePathArg: string;
+  samplePath: string;
+  samplePathType: SamplePathEnum;
 }

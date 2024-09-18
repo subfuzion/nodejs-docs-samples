@@ -60,6 +60,7 @@ class SampleNode {
   add(node: SampleNode) {
     if (!this.children) this.children = [];
     this.children.push(node);
+    return this;
   }
 
   /**
@@ -104,6 +105,9 @@ class SampleRunner {
   }
 }
 
-const suite = new SampleNode('Sample Suite');
+const suite = new SampleNode('Sample Suite')
+  .add(new SampleNode('subsuite1'))
+  .add(new SampleNode('subsuite2'));
+
 const runner = new SampleRunner(suite);
 runner.run();
