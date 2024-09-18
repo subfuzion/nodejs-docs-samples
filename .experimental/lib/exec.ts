@@ -12,63 +12,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {spawn, spawnSync} from 'node:child_process';
+import {
+  ChildProcessWithoutNullStreams,
+  spawn,
+  spawnSync,
+} from 'node:child_process';
 
-const defaultCommand = 'node';
+export const DefaultCommand = 'node';
 
-/**
- * @typedef {object} Result
- * @property {string} command - The full command plus arguments.
- * @property {string} stdout - The `stdout` buffer as a trimmed string.
- * @property {string} stderr - The `stderr` buffer as a trimmed string.
- * @property {number} exitCode - The command's exit code.
- * @property {Error} error - The error if the command failed to execute.
- */
+export interface ExecCommandOptions {
+  cwd?: string | URL;
+  env?: Record<string, string>;
+  argv0?: string;
+  stdio?: Buffer | string;
+  detached?: boolean;
+  uid?: number;
+  gid?: number;
+  serialization?: string;
+  shell?: boolean | string;
+  windowsVerbatimArguments?: boolean;
+  windowsHide?: boolean;
+  signal?: AbortSignal;
+  timeout?: number;
+  killSignal?: string | number;
+}
 
-/**
- * @typedef {object} ExecOptions
- * @property {number} [timeout]
- * @property {string | number} [killSignal]
- * @property {Record<string, string>} [env]
- * @property {string | Buffer}  [input]
- * @property {number} [maxBuffer]
- * @property {string} [encoding]
- * @property {string | URL | TypedArray | DataView} [cwd]
- * @property {string} [argv0]
- * @property {string | Array} [stdio]
- * @property {number} [uid]
- * @property {number} [gid]
- */
+export interface ExecCommandResult {
+  command: string;
+  stdout: string;
+  stderr: string;
+  exitCode: number;
+  error: Error;
+}
 
-/**
- * @callback Callback
- * @param {Result} result
- */
+export type Callback = (result: ExecCommandResult) => void;
 
 /**
  * Spawns child process. Does not throw. This function can be used to either
- * return a {Result} synchronously or to return the child process and
- * asynchronously call a callback with a {Result}.
- * @param {string | string[]} cmd - Command (pathname). Optional, if the first
- *                                  argument is the `args` array, then the
- *                                  default command is 'node'.
- * @param {string[] | {}} [args] - Command arguments.
- * @param {ExecOptions | Callback} [options] - Options for executing command.
- * @param {Callback} [cb] - Optional callback for inspecting result.
- * @returns {Result | ChildProcessWithoutNullStreams}
+ * return an ExecCommandResult synchronously or to return the child process (or
+ * null if exec failure) and asynchronously call a callback with an
+ * ExecCommandResult.
  */
-export function execNode(cmd, args, options, cb) {
+export function exec(
+  cmd: string | string[],
+  args?: string[] | ExecCommandOptions,
+  options?: ExecCommandOptions | Callback,
+  cb?: Callback
+): ExecCommandResult | ChildProcessWithoutNullStreams | undefined {
   // The cmd is optional, If the first argument looks like the args array,
   // reassign args to parameters on the right and then assign the default cmd.
   if (Array.isArray(cmd)) {
-    cb = options;
-    options = args;
-    args = cmd;
-    cmd = defaultCommand;
+    cb = options as Callback;
+    options = args as ExecCommandOptions;
+    args = cmd as string[];
+    cmd = DefaultCommand;
   }
 
+  // @ts-ignore
   const command = [cmd, ...args].join(' ').trim();
-  let resultObject;
+  let resultObject: ExecCommandResult;
 
   // Check if cmd exists before attempting to spawn it. This is because node
   // will hang until the timeout expires on an ENOENT. Setting `detached: true`
@@ -82,13 +84,18 @@ export function execNode(cmd, args, options, cb) {
       stdout: '',
       stderr: '',
     };
-    return cb ? cb(resultObject) : resultObject;
+    if (cb) {
+      cb(resultObject);
+      return undefined;
+    }
+    return resultObject;
   }
 
   if (cb) {
     let stdout = '';
     let stderr = '';
-    const child = spawn(cmd, args, options);
+    // @ts-ignore
+    const child = spawn(cmd, args, options) as ChildProcessWithoutNullStreams;
     try {
       child.once('error', err => {
         resultObject = {
@@ -132,11 +139,11 @@ export function execNode(cmd, args, options, cb) {
       };
       cb(resultObject);
     }
-    // In case the caller wants access.
     return child;
   } else {
-    // If no callback
+    /* no callback */
     try {
+      // @ts-ignore
       const result = spawnSync(cmd, args, options);
       resultObject = {
         error: undefined,
@@ -211,122 +218,3 @@ execNode('foo', [], options, result => {
   }
 });
 */
-
-/**
- * @typedef {object} ExecCommandSpec
- * @property {string} cmd - Command (pathname).
- * @property {string[]} args -  Command arguments.
- * @property {ExecOptions} options - Options for executing command.
- * @property {Callback} cb - Optional callback for inspecting result.
- */
-
-/**
- * @callback VisitorCallback
- * @param {TestNode} node
- */
-
-/**
- * @typedef VisitorCallbackOptions
- * @property {boolean} skip - If true, won't callback for skipped nodes.
- */
-
-/**
- * @class
- */
-// eslint-disable-next-line no-unused-vars
-class TestNode {
-  /** @type {ExecCommandSpec} */
-  cmdSpec;
-
-  /** @type {TestNode[]} */
-  children;
-
-  /** @type {boolean} */
-  skip;
-
-  /**
-   * Spawns child process. Does not throw. This function can be used to either
-   * return a {Result} synchronously or to return the child process and
-   * asynchronously call a callback with a {Result}.
-   * @param {string} name - The name of the test.
-   * @param {string | string[]} [cmd] - Command (pathname). Optional, if the first
-   *                                    argument is the `args` array, then the
-   *                                    default command is 'node'.
-   * @param {string[] | {}} [args] - Command arguments.
-   * @param {ExecOptions | Callback} [options] - Options for executing command.
-   * @param {Callback} [cb] - Optional callback for inspecting result.
-   * @returns {Result | ChildProcessWithoutNullStreams}
-   */
-  constructor(name, cmd, args, options, cb) {
-    // The cmd is optional, If the first argument looks like the args array,
-    // reassign args to parameters on the right and then assign the default cmd.
-    if (Array.isArray(cmd)) {
-      cb = options;
-      options = args;
-      args = cmd;
-      cmd = defaultCommand;
-    }
-    this.cmdSpec = {cmd, args, options, cb};
-    this.name = name;
-  }
-
-  add(node) {
-    if (!this.children) this.children = [];
-    this.children.push(node);
-  }
-
-  /**
-   * Perform an in-order traversal of all test nodes.
-   * @param {VisitorCallback} cb - The visitor callback function.
-   * @param {VisitorCallbackOptions} [options] - Visitor callback options.
-   */
-  visit(cb, options) {
-    const _visit = (node, cb) => {
-      if (options && options.skip && node.skip) return;
-      cb(node);
-      if (node.children) {
-        node.children.forEach(child => _visit(child, cb));
-      }
-    };
-    _visit(this, cb);
-  }
-}
-
-// eslint-disable-next-line no-unused-vars
-class TestRunner {
-  /** @type {TestNode} */
-  root;
-
-  /**
-   * @param {TestNode} node
-   */
-  constructor(node) {
-    this.root = node;
-  }
-
-  /**
-   * Perform an in-order traversal of all test nodes starting at the root.
-   * @param {VisitorCallback} cb - The visitor callback function.
-   * @param {VisitorCallbackOptions} [options] - Visitor callback options.
-   */
-  visit(cb, options) {
-    if (!this.root) return;
-    this.root.visit(cb, options);
-  }
-
-  /**
-   * Perform in-order tests of all nodes starting at the root.
-   */
-  test() {
-    const visitor = node => {
-      console.log(node.name);
-    };
-    this.visit(visitor);
-  }
-}
-
-const testSuite = new TestNode('Test Suite');
-
-const testRunner = new TestRunner(testSuite);
-
-testRunner.test();
