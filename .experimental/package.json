@@ -1,0 +1,21 @@
+{
+  "name": "sample-runner",
+  "description": "A test runner that executes tests for samples in child processes",
+  "type": "module",
+  "private": true,
+  "author": "Google LLC",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "bin": {
+    "sample-runner": "bin/main.ts"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test test/**/*test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.5.5"
+  }
+}

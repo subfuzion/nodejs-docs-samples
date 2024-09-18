@@ -13,24 +13,28 @@
 // limitations under the License.
 
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test, {suite} from 'node:test';
 
 const timeout = 5 * 60000; // 5 minutes * 60000 ms/min
 
-test('experimental', {timeout}, () => {
-  test('folder', () => {
+await suite('experimental', {timeout}, async () => {
+  await suite('folder', async () => {
     test('dummy', () => {
       assert.equal(1, 1);
     });
   });
-  test('folders', () => {
+  await suite('folders', async () => {
     test('dummy', () => {
       assert.equal(1, 1);
+      assert.ok(Promise.resolve(true));
     });
   });
-  test('managed_folders', () => {
-    test('dummy', () => {
+  await test('managed_folders', async () => {
+    await test('dummy', async () => {
       assert.equal(1, 1);
+      await Promise.resolve();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      assert.ok(true);
     });
   });
 });
