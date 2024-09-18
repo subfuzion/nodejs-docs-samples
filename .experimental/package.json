@@ -1,10 +1,10 @@
 {
   "name": "sample-runner",
-  "description": "A test runner that executes tests for samples in child processes",
-  "type": "module",
-  "private": true,
+  "description": "A sample runner that checks for failing samples",
   "author": "Google LLC",
   "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
   "engines": {
     "node": ">=22.6.0"
   },
@@ -12,10 +12,12 @@
     "sample-runner": "bin/main.ts"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test test/**/*test.ts"
+    "nodex": "node --experimental-strip-types --disable-warning=ExperimentalWarning lib/runner.ts",
+    "start": "tsx lib/runner.ts",
+    "test": "tsx --test test/**/*test.ts"
   },
-  "devDependencies": {
-    "@types/node": "22.5.5"
+  "dependencies": {
+    "@types/node": "22.5.5",
+    "tsx": "4.19.1"
   }
 }

@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  ChildProcessWithoutNullStreams,
-  spawn,
-  spawnSync,
-} from 'node:child_process';
+import {ChildProcess, spawn, spawnSync} from 'node:child_process';
 
 export const DefaultCommand = 'node';
 
@@ -45,7 +41,7 @@ export interface ExecCommandResult {
   error: Error;
 }
 
-export type Callback = (result: ExecCommandResult) => void;
+export type ExecCommandCallback = (result: ExecCommandResult) => void;
 
 /**
  * Spawns child process. Does not throw. This function can be used to either
@@ -56,13 +52,13 @@ export type Callback = (result: ExecCommandResult) => void;
 export function exec(
   cmd: string | string[],
   args?: string[] | ExecCommandOptions,
-  options?: ExecCommandOptions | Callback,
-  cb?: Callback
-): ExecCommandResult | ChildProcessWithoutNullStreams | undefined {
+  options?: ExecCommandOptions | ExecCommandCallback,
+  cb?: ExecCommandCallback
+): ExecCommandResult | ChildProcess | undefined {
   // The cmd is optional, If the first argument looks like the args array,
   // reassign args to parameters on the right and then assign the default cmd.
   if (Array.isArray(cmd)) {
-    cb = options as Callback;
+    cb = options as ExecCommandCallback;
     options = args as ExecCommandOptions;
     args = cmd as string[];
     cmd = DefaultCommand;
@@ -97,7 +93,7 @@ export function exec(
     // @ts-ignore
     const child = spawn(cmd, args, options) as ChildProcessWithoutNullStreams;
     try {
-      child.once('error', err => {
+      child.once('error', (err: Error) => {
         resultObject = {
           error: err,
           command: command,
@@ -112,7 +108,7 @@ export function exec(
         child.kill();
         cb(resultObject);
       });
-      child.once('close', code => {
+      child.once('close', (code: number) => {
         resultObject = {
           error: undefined,
           command: command,
@@ -122,10 +118,10 @@ export function exec(
         };
         cb(resultObject);
       });
-      child.stdout.on('data', data => {
+      child.stdout.on('data', (data: Buffer) => {
         stdout += data.toString();
       });
-      child.stderr.on('data', data => {
+      child.stderr.on('data', (data: Buffer) => {
         stderr += data.toString();
       });
     } catch (err) {
