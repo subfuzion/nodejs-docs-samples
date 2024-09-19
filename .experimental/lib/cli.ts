@@ -14,36 +14,24 @@
 
 import {inspect} from 'node:util';
 
-import {Args} from './args.ts';
+import {Config} from './config.ts';
 import {Context} from './context.ts';
+import {IO} from './io.ts';
 
 export class Cli {
   context: Context;
 
   constructor(argv: string[]) {
-    const c = new Context();
-    c.execPath = argv[0];
-    c.mainModule = argv[1];
-    c.args = argv.slice(2);
-
-    const args = new Args();
-    args.parse(c.args);
-    console.log(args);
-    c.samplePathArg = args.samplePath;
-
+    const config = new Config();
+    const c = new Context(argv, config, IO.defaultIO());
     this.context = c;
   }
 
   run() {
-    console.log(this);
-  }
-
-  toString() {
-    return inspect(this);
+    this.context.io.debug(inspect(this, false, 100));
   }
 
   static run(argv: string[]) {
-    console.log('run');
     const cli = new Cli(argv);
     cli.run();
   }
