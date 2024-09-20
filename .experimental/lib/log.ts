@@ -34,5 +34,4 @@ export interface Logger {
   ok(message?: string, ...args: any[]): void;
   pass(message?: string, ...args: any[]): void;
   fail(message?: string, ...args: any[]): void;
-  abort(message?: string, ...args: any[]): void;
 }

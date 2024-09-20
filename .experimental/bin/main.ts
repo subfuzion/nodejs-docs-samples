@@ -15,4 +15,14 @@
 // limitations under the License.
 import {argv} from 'node:process';
 import {Cli} from '../lib/cli.ts';
-Cli.run(argv);
+
+function abort(message?: string, ...rest: any[]): void {
+  console.error(`⛔️ ERROR: ${message}`, ...rest);
+  process.exit(1);
+}
+
+try {
+  Cli.run(argv);
+} catch (err) {
+  abort(err);
+}

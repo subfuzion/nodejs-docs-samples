@@ -67,15 +67,18 @@ export class Args {
       const positionals = parsed.positionals;
       parsedArgs.positionals = positionals;
 
+      if (!positionals.length) {
+        throw new Error('not enough arguments (expected one)');
+      }
       if (positionals.length > 1) {
-        this.logger.abort('too many arguments');
+        throw new Error(`too many arguments (expected one): ${positionals}`);
       }
 
       this.samplePath = positionals[0];
 
       let logLevel = values.loglevel as LogLevel;
       if (!LogLevels.includes(logLevel)) {
-        this.logger.abort('bad loglevel:', logLevel);
+        throw new Error('bad loglevel:', logLevel);
       }
       this.logLevel = logLevel;
 
@@ -83,7 +86,7 @@ export class Args {
     } catch (err) {
       let m = err.message.split('.')[0];
       m = m[0].toLowerCase() + m.slice(1);
-      this.logger.abort(m);
+      throw new Error(m);
     }
   }
 }

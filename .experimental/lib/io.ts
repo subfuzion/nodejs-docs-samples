@@ -117,14 +117,6 @@ export class IO implements Logger {
     this.log(`❌ FAIL: ${message}`, ...args);
   }
 
-  /**
-   * This displays an error message and then exits the program.
-   */
-  abort(message?: string, ...args: any[]): void {
-    this.error(message, ...args);
-    process.exit(1);
-  }
-
   static defaultIO(logLevel?: LogLevel): IO {
     return new IO(logLevel);
   }
