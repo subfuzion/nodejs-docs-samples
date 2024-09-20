@@ -14,9 +14,12 @@
 
 import {type Logger, type LogLevel, LogLevels} from './log.ts';
 
-export type StdinType = NodeJS.ReadStream & {fd: 0};
-export type StdoutType = NodeJS.WriteStream & {fd: 1};
-export type StderrType = NodeJS.WriteStream & {fd: 2};
+// export type StdinType = NodeJS.ReadStream & {fd: 0};
+// export type StdoutType = NodeJS.WriteStream & {fd: 1};
+// export type StderrType = NodeJS.WriteStream & {fd: 2};
+export type StdinType = NodeJS.ReadStream;
+export type StdoutType = NodeJS.WriteStream;
+export type StderrType = NodeJS.WriteStream;
 
 const DefaultConsole = console;
 const DefaultStdin: StdinType = process.stdin;
@@ -68,6 +71,10 @@ export class IO implements Logger {
 
   get stderr(): StderrType {
     return this.#stderr;
+  }
+
+  clear(): void {
+    this.console.clear();
   }
 
   /**

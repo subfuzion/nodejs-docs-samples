@@ -13,12 +13,63 @@
 // limitations under the License.
 
 import assert from 'node:assert/strict';
-import test, {suite} from 'node:test';
+import test, {before, beforeEach, suite} from 'node:test';
+
+import {Args} from './args.ts';
+import {MockLogger} from '../test/mockLogger.ts';
 
 const timeout = 5 * 60000; // 5 minutes * 60000 ms/min
 
 await suite('args', {timeout}, async () => {
-  test('dummy', () => {
-    assert.equal(1, 1);
+  let mockLogger: MockLogger;
+  let args: Args;
+
+  before(() => {
+    mockLogger = new MockLogger();
+    args = new Args(mockLogger);
+  });
+
+  beforeEach(() => {
+    mockLogger.clear();
+  });
+
+  test('must have at least one argument', () => {
+    const argv = [];
+    assert.throws(() => args.parse(argv));
+  });
+
+  test('must not have more than one argument', () => {
+    const argv = ['.', 'foo'];
+    assert.throws(() => args.parse(argv));
+  });
+
+  test('should set loglevel = log', () => {
+    const argv = ['--loglevel=log', '.'];
+    args.parse(argv);
+    assert.equal(args.logLevel, 'log');
+  });
+
+  test('should log', () => {
+    const argv = ['--loglevel=log', '.'];
+    args.parse(argv);
+    assert.equal(args.logLevel, 'log');
+
+    mockLogger.log('hello');
+    assert.ok(mockLogger.stdout.includes('hello'));
+  });
+
+  test('should not log', () => {
+    const argv = ['--loglevel=log', '.'];
+    args.parse(argv);
+    assert.equal(args.logLevel, 'log');
+
+    mockLogger.debug('hello');
+    assert.ok(!mockLogger.stdout.includes('hello'));
+  });
+
+  test('sample path', () => {
+    const argv = ['.'];
+    args.parse(argv);
+    assert.equal(args.logLevel, 'log');
   });
 });
