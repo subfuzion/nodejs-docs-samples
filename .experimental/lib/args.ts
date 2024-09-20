@@ -50,43 +50,37 @@ export class Args {
       },
     };
 
-    try {
-      const parsed = parseArgs({
-        // @ts-ignore
-        options,
-        args,
-        allowPositionals: true,
-        strict: true,
-      });
+    const parsed = parseArgs({
+      // @ts-ignore
+      options,
+      args,
+      allowPositionals: true,
+      strict: true,
+    });
 
-      const parsedArgs = new ParsedArgs();
-      this.parsedArgs = parsedArgs;
+    const parsedArgs = new ParsedArgs();
+    this.parsedArgs = parsedArgs;
 
-      const values = Object.fromEntries(Object.entries(parsed.values));
-      parsedArgs.values = values;
-      const positionals = parsed.positionals;
-      parsedArgs.positionals = positionals;
+    const values = Object.fromEntries(Object.entries(parsed.values));
+    parsedArgs.values = values;
+    const positionals = parsed.positionals;
+    parsedArgs.positionals = positionals;
 
-      if (!positionals.length) {
-        throw new Error('not enough arguments (expected one)');
-      }
-      if (positionals.length > 1) {
-        throw new Error(`too many arguments (expected one): ${positionals}`);
-      }
-
-      this.samplePath = positionals[0];
-
-      let logLevel = values.loglevel as LogLevel;
-      if (!LogLevels.includes(logLevel)) {
-        throw new Error('bad loglevel:', logLevel);
-      }
-      this.logLevel = logLevel;
-
-      return parsedArgs;
-    } catch (err) {
-      let m = err.message.split('.')[0];
-      m = m[0].toLowerCase() + m.slice(1);
-      throw new Error(m);
+    if (!positionals.length) {
+      throw new Error('not enough arguments (expected one)');
     }
+    if (positionals.length > 1) {
+      throw new Error(`too many arguments (expected one): ${positionals}`);
+    }
+
+    this.samplePath = positionals[0];
+
+    let logLevel = values.loglevel as LogLevel;
+    if (!LogLevels.includes(logLevel)) {
+      throw new Error(`bad loglevel: ${logLevel}`);
+    }
+    this.logLevel = logLevel;
+
+    return parsedArgs;
   }
 }

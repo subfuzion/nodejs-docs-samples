@@ -24,5 +24,8 @@ function abort(message?: string, ...rest: any[]): void {
 try {
   Cli.run(argv);
 } catch (err) {
-  abort(err);
+  // Shorten and standardize error output.
+  let m = err.message.split('.')[0];
+  m = m[0].toLowerCase() + m.slice(1);
+  abort(m);
 }

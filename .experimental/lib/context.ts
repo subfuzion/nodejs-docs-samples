@@ -57,7 +57,7 @@ export class Context {
 
     // sample path
     if (!isAccessible(args.samplePath)) {
-      io.abort('sample is not accessible:', args.samplePath);
+      throw new Error(`can't access: ${args.samplePath}`);
     }
     const samplePath = new ParsedPath();
     samplePath.original = args.samplePath;
@@ -84,13 +84,13 @@ export class Context {
 }
 
 /**
- * @param path - Path like.
+ * Checks if path is accessible for the specified mode (default is read access).
+ * @param path - File or directory path.
  * @param mode - F_OK, R_OK, W_OK, or X_OK.
  *               See: https://nodejs.org/api/fs.html#file-access-constants
  */
-function isAccessible(path: string, mode?: number): boolean {
+function isAccessible(path: string, mode: number = constants.R_OK): boolean {
   try {
-    mode = mode || constants.R_OK;
     accessSync(path, mode);
     return true;
   } catch (err) {
