@@ -18,9 +18,7 @@ import test, {before, beforeEach, suite} from 'node:test';
 import {Args} from './args.ts';
 import {MockLogger} from '../test/mockLogger.ts';
 
-const timeout = 5 * 60000; // 5 minutes * 60000 ms/min
-
-await suite('args', {timeout}, async () => {
+await suite('args', async () => {
   let mockLogger: MockLogger;
   let args: Args;
 
@@ -70,6 +68,6 @@ await suite('args', {timeout}, async () => {
   test('sample path', () => {
     const argv = ['.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'log');
+    assert.equal(args.samplePath, '.');
   });
 });

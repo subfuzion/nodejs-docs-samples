@@ -51,21 +51,33 @@ export type ExecCommandCallback = (result: ExecCommandResult) => void;
  */
 export function exec(
   cmd: string | string[],
-  args?: string[] | ExecCommandOptions,
+  args?: string[] | ExecCommandOptions | ExecCommandCallback,
   options?: ExecCommandOptions | ExecCommandCallback,
   cb?: ExecCommandCallback
 ): ExecCommandResult | ChildProcess | undefined {
-  // The cmd is optional, If the first argument looks like the args array,
-  // reassign args to parameters on the right and then assign the default cmd.
+  // cmd, options, and cb are optional. Shift args to match parameters.
+  // It can take up to 3 shifts to get all 4 args matched to parameters.
   if (Array.isArray(cmd)) {
     cb = options as ExecCommandCallback;
     options = args as ExecCommandOptions;
     args = cmd as string[];
     cmd = DefaultCommand;
   }
+  if (!Array.isArray(args)) {
+    cb = options as ExecCommandCallback;
+    options = args as ExecCommandOptions;
+    args = undefined;
+  }
+  if (typeof options === 'function') {
+    cb = options as ExecCommandCallback;
+    options = undefined;
+  }
 
-  // @ts-ignore
-  const command = [cmd, ...args].join(' ').trim();
+  let command = cmd;
+  if (Array.isArray(args) && args.length > 0) {
+    command += ' ' + args.join(' ').trim();
+  }
+
   let resultObject: ExecCommandResult;
 
   // Check if cmd exists before attempting to spawn it. This is because node
@@ -74,7 +86,7 @@ export function exec(
   const result = spawnSync('which', [cmd]);
   if (result.status !== 0) {
     resultObject = {
-      error: new Error(`command '${cmd}' not found`),
+      error: new Error(`${cmd}: command not found`),
       command: command,
       exitCode: -1,
       stdout: '',
@@ -160,57 +172,3 @@ export function exec(
     return resultObject;
   }
 }
-
-/*
-// test sync
-const options = {timeout: 5000};
-const result = execNode(['experimental/folder/create.mjs'], options);
-if (result.exitCode !== 0) {
-  console.error(result.stderr);
-  console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-} else {
-  console.log(result.stdout);
-  console.log(`PASS: ${result.command}`);
-}
-
-// test with callback
-execNode(['experimental/folders/create.mjs'], options, result => {
-  if (result.error) {
-    console.error(result.error);
-    console.error(`FAIL: failed to exec: '${result.command}'`);
-  } else if (result.exitCode !== 0) {
-    console.error(result.stderr);
-    console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-  } else {
-    console.log(result.stdout);
-    console.log(`PASS: ${result.command}`);
-  }
-});
-
-execNode(['--version'], options, result => {
-  if (result.error) {
-    console.error(result.error);
-    console.error(`ERROR: failed to exec: '${result.command}'`);
-  } else if (result.exitCode !== 0) {
-    console.error(result.stderr);
-    console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-  } else {
-    console.log(result.stdout);
-    console.log(`PASS: ${result.command}`);
-  }
-});
-
-// expect an error
-execNode('foo', [], options, result => {
-  if (result.error) {
-    console.error(result.error);
-    console.error(`FAIL: failed to exec: '${result.command}'`);
-  } else if (result.exitCode !== 0) {
-    console.error(result.stderr);
-    console.error(`FAIL: ${result.command} (exit code: ${result.exitCode})`);
-  } else {
-    console.log(result.stdout);
-    console.log(`PASS: ${result.command}`);
-  }
-});
-*/
