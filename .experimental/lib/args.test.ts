@@ -12,26 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {inspect} from 'node:util';
+import assert from 'node:assert/strict';
+import test, {suite} from 'node:test';
 
-import {Config} from './config.ts';
-import {Context} from './context.ts';
-import {IO} from './io.ts';
+const timeout = 5 * 60000; // 5 minutes * 60000 ms/min
 
-export class Cli {
-  context: Context;
-
-  constructor(argv: string[]) {
-    const config = new Config();
-    this.context = new Context(argv, config, IO.defaultIO());
-  }
-
-  run() {
-    this.context.io.debug(inspect(this, false, 100));
-  }
-
-  static run(argv: string[]) {
-    const cli = new Cli(argv);
-    cli.run();
-  }
-}
+await suite('args', {timeout}, async () => {
+  test('dummy', () => {
+    assert.equal(1, 1);
+  });
+});

@@ -12,23 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {LogLevels} from './io.ts';
 import {inspect, parseArgs} from 'node:util';
-
-export interface Logger {
-  print(str: Uint8Array | string): void;
-  debug(message?: any, ...rest: any[]): void;
-  log(message?: any, ...rest: any[]): void;
-  info(message?: any, ...rest: any[]): void;
-  warn(message?: string, ...rest: any[]): void;
-  error(message?: string, ...rest: any[]): void;
-  ok(message?: string, ...args: any[]): void;
-  pass(message?: string, ...args: any[]): void;
-  fail(message?: string, ...args: any[]): void;
-  abort(message?: string, ...args: any[]): void;
-}
-
-type LogLevel = (typeof LogLevels)[number];
+import {type Logger, type LogLevel, LogLevels} from './log.ts';
 
 interface KeyValues {
   [key: string]: string | boolean | number | (string | boolean | number)[];
@@ -65,34 +50,40 @@ export class Args {
       },
     };
 
-    const parsed = parseArgs({
-      // @ts-ignore
-      options,
-      args,
-      allowPositionals: true,
-      strict: true,
-    });
+    try {
+      const parsed = parseArgs({
+        // @ts-ignore
+        options,
+        args,
+        allowPositionals: true,
+        strict: true,
+      });
 
-    const parsedArgs = new ParsedArgs();
-    this.parsedArgs = parsedArgs;
+      const parsedArgs = new ParsedArgs();
+      this.parsedArgs = parsedArgs;
 
-    const values = Object.fromEntries(Object.entries(parsed.values));
-    parsedArgs.values = values;
-    const positionals = parsed.positionals;
-    parsedArgs.positionals = positionals;
+      const values = Object.fromEntries(Object.entries(parsed.values));
+      parsedArgs.values = values;
+      const positionals = parsed.positionals;
+      parsedArgs.positionals = positionals;
 
-    if (positionals.length > 1) {
-      this.logger.abort('too many arguments');
+      if (positionals.length > 1) {
+        this.logger.abort('too many arguments');
+      }
+
+      this.samplePath = positionals[0];
+
+      let logLevel = values.loglevel as LogLevel;
+      if (!LogLevels.includes(logLevel)) {
+        this.logger.abort('bad loglevel:', logLevel);
+      }
+      this.logLevel = logLevel;
+
+      return parsedArgs;
+    } catch (err) {
+      let m = err.message.split('.')[0];
+      m = m[0].toLowerCase() + m.slice(1);
+      this.logger.abort(m);
     }
-
-    this.samplePath = positionals[0];
-
-    let logLevel = values.loglevel as LogLevel;
-    if (!LogLevels.includes(logLevel)) {
-      this.logger.abort('bad loglevel:', logLevel);
-    }
-    this.logLevel = logLevel;
-
-    return parsedArgs;
   }
 }

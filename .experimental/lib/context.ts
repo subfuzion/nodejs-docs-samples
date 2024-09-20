@@ -46,10 +46,12 @@ export class Context {
     this.config = config;
     this.io = io;
 
+    // command line
     this.execPath = argv[0];
     this.main = argv[1];
     this.args = argv.slice(2);
 
+    // command line args
     const args = new Args(io);
     this.parsedArgs = args.parse(this.args);
 
@@ -57,7 +59,6 @@ export class Context {
     if (!isAccessible(args.samplePath)) {
       io.abort('sample is not accessible:', args.samplePath);
     }
-
     const samplePath = new ParsedPath();
     samplePath.original = args.samplePath;
     samplePath.normalized = normalize(args.samplePath);
@@ -71,15 +72,18 @@ export class Context {
     samplePath.ext = ext;
     this.samplePath = samplePath;
 
-    console.log(resolve(p));
-
     // log level
     this.io.logLevel = args.logLevel;
+  }
+
+  toString(): string {
+    return `{
+      io: ${this.io.toString()}
+    }`;
   }
 }
 
 /**
- *
  * @param path - Path like.
  * @param mode - F_OK, R_OK, W_OK, or X_OK.
  *               See: https://nodejs.org/api/fs.html#file-access-constants

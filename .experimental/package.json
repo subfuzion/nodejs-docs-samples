@@ -14,7 +14,7 @@
   "scripts": {
     "nodex": "node --experimental-strip-types --disable-warning=ExperimentalWarning lib/cli.ts",
     "start": "tsx lib/cli.ts",
-    "test": "tsx --test test/**/*test.ts"
+    "test": "tsx --test ./lib/**/*.test.ts"
   },
   "dependencies": {
     "@types/node": "22.5.5",

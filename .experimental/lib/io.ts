@@ -12,19 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// export type Logger = (message?: string, ...args: any[]) => void;
-
-export const LogLevels = [
-  'all',
-  'debug',
-  'log',
-  'info',
-  'warn',
-  'error',
-  'none',
-] as const;
-
-export type LogLevel = (typeof LogLevels)[number];
+import {type Logger, type LogLevel, LogLevels} from './log.ts';
 
 export type StdinType = NodeJS.ReadStream & {fd: 0};
 export type StdoutType = NodeJS.WriteStream & {fd: 1};
@@ -35,21 +23,8 @@ const DefaultStdin: StdinType = process.stdin;
 const DefaultStdout: StdoutType = process.stdout;
 const DefaultStderr: StderrType = process.stderr;
 
-export interface Logger {
-  print(str: Uint8Array | string): void;
-  debug(message?: any, ...rest: any[]): void;
-  log(message?: any, ...rest: any[]): void;
-  info(message?: any, ...rest: any[]): void;
-  warn(message?: string, ...rest: any[]): void;
-  error(message?: string, ...rest: any[]): void;
-  ok(message?: string, ...args: any[]): void;
-  pass(message?: string, ...args: any[]): void;
-  fail(message?: string, ...args: any[]): void;
-  abort(message?: string, ...args: any[]): void;
-}
-
 export class IO implements Logger {
-  #logLevel: LogLevel;
+  logLevel: LogLevel;
   readonly #console: Console;
   readonly #stdin: StdinType;
   readonly #stdout: StdoutType;
@@ -62,19 +37,17 @@ export class IO implements Logger {
     stdout: StdoutType = DefaultStdout,
     stderr: StderrType = DefaultStderr
   ) {
-    this.#logLevel = logLevel;
+    this.logLevel = logLevel;
     this.#console = console;
     this.#stdin = stdin;
     this.#stdout = stdout;
     this.#stderr = stderr;
   }
 
-  get logLevel(): LogLevel {
-    return this.#logLevel;
-  }
-
-  set logLevel(logLevel: LogLevel) {
-    this.#logLevel = logLevel;
+  toString(): string {
+    return `{
+      logLevel: ${this.logLevel},
+    }`;
   }
 
   shouldLog(logLevel: LogLevel): boolean {
