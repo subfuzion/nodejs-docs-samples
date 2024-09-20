@@ -14,18 +14,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import {argv} from 'node:process';
-import {Cli} from '../lib/cli.ts';
 
-function abort(message?: string, ...rest: any[]): void {
-  console.error(`⛔️ ERROR: ${message}`, ...rest);
-  process.exit(1);
-}
+import {Cli} from '../lib/cli.ts';
+import {IO} from '../lib/io.ts';
 
 try {
   Cli.run(argv);
 } catch (err) {
-  // Shorten and standardize error output.
-  let m = err.message.split('.')[0];
-  m = m[0].toLowerCase() + m.slice(1);
-  abort(m);
+  // ALL lib exceptions surface here.
+  IO.abort(err);
+  process.exitCode = 1;
 }

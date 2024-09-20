@@ -127,4 +127,19 @@ export class IO implements Logger {
   static defaultIO(logLevel?: LogLevel): IO {
     return new IO(logLevel);
   }
+
+  /**
+   * Will print regardless of loglevel.
+   */
+  static abort(reason: string | Error) {
+    // Standardize format and shorten error output.
+    let m = reason instanceof Error ? reason.message : reason;
+    m = m.split('\n')[0].split('.')[0];
+    m = m[0].toLowerCase() + m.slice(1);
+    if (process.stdout.isTTY) {
+      new IO().console.error(`🚫 ABORT: ${m}`);
+    } else {
+      new IO().console.error(`ABORT: ${m}`);
+    }
+  }
 }
