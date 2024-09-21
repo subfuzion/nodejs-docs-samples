@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {accessSync, constants, statSync} from 'node:fs';
+import {statSync} from 'node:fs';
 import {normalize, parse, resolve} from 'node:path';
 
 import {Config} from './config.ts';
@@ -28,6 +28,19 @@ class ParsedPath {
   base: string;
   name: string;
   ext: string;
+
+  constructor(original?: string) {
+    this.original = original || '.';
+    this.normalized = normalize(this.original);
+    let p = this.normalized;
+    this.isDirectory = isDirectory(p);
+    this.full = resolve(p);
+    const {dir, base, name, ext} = parse(p);
+    this.dir = normalize(dir);
+    this.base = base;
+    this.name = name;
+    this.ext = ext;
+  }
 }
 
 export class Context {
@@ -55,22 +68,7 @@ export class Context {
     const args = new Args(io);
     this.parsedArgs = args.parse(this.args);
 
-    // sample path
-    if (!isAccessible(args.samplePath)) {
-      throw new Error(`can't access: ${args.samplePath}`);
-    }
-    const samplePath = new ParsedPath();
-    samplePath.original = args.samplePath;
-    samplePath.normalized = normalize(args.samplePath);
-    let p = samplePath.normalized;
-    samplePath.isDirectory = isDirectory(p);
-    samplePath.full = resolve(p);
-    const {dir, base, name, ext} = parse(p);
-    samplePath.dir = normalize(dir);
-    samplePath.base = base;
-    samplePath.name = name;
-    samplePath.ext = ext;
-    this.samplePath = samplePath;
+    this.samplePath = new ParsedPath(args.samplePath);
 
     // log level
     this.io.logLevel = args.logLevel;
@@ -80,21 +78,6 @@ export class Context {
     return `{
       io: ${this.io.toString()}
     }`;
-  }
-}
-
-/**
- * Checks if path is accessible for the specified mode (default is read access).
- * @param path - File or directory path.
- * @param mode - F_OK, R_OK, W_OK, or X_OK.
- *               See: https://nodejs.org/api/fs.html#file-access-constants
- */
-function isAccessible(path: string, mode: number = constants.R_OK): boolean {
-  try {
-    accessSync(path, mode);
-    return true;
-  } catch (err) {
-    return false;
   }
 }
 

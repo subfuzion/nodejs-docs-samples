@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {accessSync, constants} from 'node:fs';
 import {inspect} from 'node:util';
 
 import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
+import {LogLevels} from './log.ts';
 
 export class Cli {
   context: Context;
@@ -27,11 +29,65 @@ export class Cli {
   }
 
   run() {
+    if (this.context.parsedArgs.values.help) {
+      return this.printUsage();
+    }
     this.context.io.debug(inspect(this, false, 100));
+    this.validate();
+  }
+
+  validate() {
+    const context = this.context;
+    if (!LogLevels.includes(context.io.logLevel)) {
+      throw new Error(`bad loglevel: ${context.io.logLevel}`);
+    }
+    if (!context.parsedArgs.positionals.length) {
+      throw new Error('not enough arguments (expected one)');
+    }
+    if (context.parsedArgs.positionals.length > 1) {
+      throw new Error(
+        `too many arguments (expected one): ${context.parsedArgs.positionals}`
+      );
+    }
+    if (!isAccessible(this.context.samplePath.normalized)) {
+      throw new Error(
+        `can't access path "${this.context.samplePath.normalized}"`
+      );
+    }
+  }
+
+  printUsage() {
+    const usage = `sample-runner (v1.0) - Run sample(s) and report exit codes.
+   
+USAGE:
+  sample-runner [OPTIONS] PATHNAME
+
+OPTIONS:
+  -h, --help        Print this help
+  -l, --loglevel    Print:  all | debug | log (default) | warn | error | none
+  -v, --version     Print version
+
+`;
+    this.context.io.printf(usage);
   }
 
   static run(argv: string[]) {
     const cli = new Cli(argv);
     cli.run();
+  }
+}
+
+/**
+ * Checks if path is accessible for the specified mode (default is read access).
+ * @param path - File or directory path.
+ * @param mode - F_OK, R_OK, W_OK, or X_OK.
+ *               See: https://nodejs.org/api/fs.html#file-access-constants
+ */
+function isAccessible(path: string, mode: number = constants.R_OK): boolean {
+  try {
+    accessSync(path, mode);
+    return true;
+  } catch (err) {
+    return false;
   }
 }

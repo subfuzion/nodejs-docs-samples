@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {format} from 'node:util';
 import {type Logger, type LogLevel, LogLevels} from './log.ts';
 
 // export type StdinType = NodeJS.ReadStream & {fd: 0};
@@ -84,6 +85,10 @@ export class IO implements Logger {
     this.stdout.write(str);
   }
 
+  printf(fmt: string, ...params: any[]): void {
+    this.print(format(fmt, ...params));
+  }
+
   /**
    * Prints message to stdout with a newline (regardless of log level).
    */
@@ -126,6 +131,13 @@ export class IO implements Logger {
 
   static defaultIO(logLevel?: LogLevel): IO {
     return new IO(logLevel);
+  }
+
+  /**
+   * Will print regardless of loglevel.
+   */
+  static printf(fmt: string, ...params: any[] | undefined): void {
+    new IO().printf(fmt, ...params);
   }
 
   /**

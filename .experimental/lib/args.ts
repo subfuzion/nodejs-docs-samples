@@ -48,6 +48,10 @@ export class Args {
         type: 'string',
         default: 'log',
       },
+      help: {
+        type: 'boolean',
+        short: 'h',
+      },
     };
 
     const parsed = parseArgs({
@@ -66,20 +70,10 @@ export class Args {
     const positionals = parsed.positionals;
     parsedArgs.positionals = positionals;
 
-    if (!positionals.length) {
-      throw new Error('not enough arguments (expected one)');
-    }
-    if (positionals.length > 1) {
-      throw new Error(`too many arguments (expected one): ${positionals}`);
-    }
+    let logLevel = values.loglevel as LogLevel;
+    this.logLevel = logLevel;
 
     this.samplePath = positionals[0];
-
-    let logLevel = values.loglevel as LogLevel;
-    if (!LogLevels.includes(logLevel)) {
-      throw new Error(`bad loglevel: ${logLevel}`);
-    }
-    this.logLevel = logLevel;
 
     return parsedArgs;
   }

@@ -34,8 +34,8 @@ export class MockLogger implements Logger {
     this.stdout += str.toString();
   }
 
-  printf(message?: string, ...args: string[]): void {
-    this.stdout += format(message, ...args);
+  printf(fmt: string, ...params: any[]): void {
+    this.stdout += format(fmt, ...params);
   }
 
   println(message?: string, ...rest: any[]): void {

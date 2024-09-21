@@ -26,6 +26,7 @@ export type LogLevel = (typeof LogLevels)[number];
 
 export interface Logger {
   print(str: Uint8Array | string): void;
+  printf(fmt: string, ...params: any[]): void;
   clear(): void;
   debug(message?: any, ...rest: any[]): void;
   log(message?: any, ...rest: any[]): void;
