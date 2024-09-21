@@ -1,6 +1,6 @@
 {
-  "name": "sample-runner",
-  "description": "A sample runner that checks for failing samples",
+  "name": "mc",
+  "description": "A process runner for samples",
   "version": "1.0.0",
   "private": true,
   "author": "Google LLC",
@@ -10,7 +10,7 @@
     "node": ">=22.6.0"
   },
   "bin": {
-    "sample-runner": "bin/main.ts"
+    "mc": "bin/main.ts"
   },
   "scripts": {
     "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning ./lib/**/*.test.ts"
