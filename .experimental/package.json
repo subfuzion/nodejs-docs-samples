@@ -14,5 +14,8 @@
   },
   "scripts": {
     "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning ./lib/**/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "22.5.5"
   }
 }

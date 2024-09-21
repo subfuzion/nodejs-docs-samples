@@ -1,13 +1,13 @@
 # mc
 
 ```
-sample-runner 1.0.0 - Run sample(s) and report exit codes.
+mc 1.0.0 - run sample(s) and report exit codes
 
 USAGE:
-  sample-runner [OPTIONS] PATHNAME
+  mc [OPTIONS] PATHNAME
 
 OPTIONS:
   -h, --help        Print this help
-  -l, --loglevel    Print:  all | debug | log (default) | warn | error | none
+  -l, --loglevel    Print:  debug | log (default) | info | warn | error | silent
   -v, --version     Print version
 ```

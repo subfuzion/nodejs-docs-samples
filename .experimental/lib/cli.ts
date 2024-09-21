@@ -19,7 +19,7 @@ import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
 import {LogLevels} from './log.ts';
-import {version} from './version.ts';
+import Package from './Package.ts';
 
 export class Cli {
   context: Context;
@@ -63,14 +63,14 @@ export class Cli {
 
   printUsage(): void {
     if (!process.stdout.isTTY) return;
-    const usage = `sample-runner 1.0.0 - Run sample(s) and report exit codes.
+    const usage = `${Package.name} ${Package.version} - run sample(s) and report exit codes
    
 USAGE:
-  sample-runner [OPTIONS] PATHNAME
+  ${Package.name} [OPTIONS] PATHNAME
 
 OPTIONS:
   -h, --help        Print this help
-  -l, --loglevel    Print:  all | debug | log (default) | warn | error | none
+  -l, --loglevel    Print:  debug | log (default) | info | warn | error | silent
   -v, --version     Print version
 
 `;
@@ -78,7 +78,7 @@ OPTIONS:
   }
 
   printVersion(): void {
-    this.context.io.println(version());
+    this.context.io.println(Package.version);
   }
 
   static run(argv: string[]) {

@@ -13,13 +13,12 @@
 // limitations under the License.
 
 export const LogLevels = [
-  'all',
   'debug',
   'log',
   'info',
   'warn',
   'error',
-  'none',
+  'silent',
 ] as const;
 
 export type LogLevel = (typeof LogLevels)[number];
