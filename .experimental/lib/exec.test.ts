@@ -15,7 +15,7 @@
 import assert from 'node:assert/strict';
 import test, {suite} from 'node:test';
 
-import {exec, ExecCommandResult} from './exec.ts';
+import {exec, type ExecCommandResult} from './exec.ts';
 
 await suite('exec', async () => {
   test('exec sync "node --version" should pass', () => {

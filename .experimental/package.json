@@ -13,12 +13,6 @@
     "sample-runner": "bin/main.ts"
   },
   "scripts": {
-    "nodex": "node --experimental-strip-types --disable-warning=ExperimentalWarning lib/cli.ts",
-    "start": "tsx bin/main.ts",
-    "test": "tsx --test ./lib/**/*.test.ts"
-  },
-  "dependencies": {
-    "@types/node": "22.5.5",
-    "tsx": "4.19.1"
+    "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning ./lib/**/*.test.ts"
   }
 }
