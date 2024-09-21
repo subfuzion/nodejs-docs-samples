@@ -19,6 +19,7 @@ import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
 import {LogLevels} from './log.ts';
+import {version} from './version.ts';
 
 export class Cli {
   context: Context;
@@ -32,6 +33,9 @@ export class Cli {
     if (this.context.parsedArgs.values.help) {
       return this.printUsage();
     }
+    if (this.context.parsedArgs.values.version) {
+      return this.printVersion();
+    }
     this.context.io.debug(inspect(this, false, 100));
     this.validate();
   }
@@ -42,6 +46,7 @@ export class Cli {
       throw new Error(`bad loglevel: ${context.io.logLevel}`);
     }
     if (!context.parsedArgs.positionals.length) {
+      this.printUsage();
       throw new Error('not enough arguments (expected one)');
     }
     if (context.parsedArgs.positionals.length > 1) {
@@ -56,8 +61,9 @@ export class Cli {
     }
   }
 
-  printUsage() {
-    const usage = `sample-runner (v1.0) - Run sample(s) and report exit codes.
+  printUsage(): void {
+    if (!process.stdout.isTTY) return;
+    const usage = `sample-runner 1.0.0 - Run sample(s) and report exit codes.
    
 USAGE:
   sample-runner [OPTIONS] PATHNAME
@@ -69,6 +75,10 @@ OPTIONS:
 
 `;
     this.context.io.printf(usage);
+  }
+
+  printVersion(): void {
+    this.context.io.println(version());
   }
 
   static run(argv: string[]) {

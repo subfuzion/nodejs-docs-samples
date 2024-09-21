@@ -1,10 +1,11 @@
 {
   "name": "sample-runner",
   "description": "A sample runner that checks for failing samples",
+  "version": "1.0.0",
+  "private": true,
   "author": "Google LLC",
   "license": "Apache-2.0",
   "type": "module",
-  "private": true,
   "engines": {
     "node": ">=22.6.0"
   },

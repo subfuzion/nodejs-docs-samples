@@ -44,13 +44,17 @@ export class Args {
 
   parse(args: string[]): ParsedArgs {
     const options = {
+      help: {
+        type: 'boolean',
+        short: 'h',
+      },
       loglevel: {
         type: 'string',
         default: 'log',
       },
-      help: {
+      version: {
         type: 'boolean',
-        short: 'h',
+        short: 'v',
       },
     };
 
