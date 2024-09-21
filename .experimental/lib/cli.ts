@@ -63,15 +63,20 @@ export class Cli {
 
   printUsage(): void {
     if (!process.stdout.isTTY) return;
-    const usage = `${Package.name} ${Package.version} - run sample(s) and report exit codes
+    const name = Package.name;
+    const version = Package.version;
+    const description = Package.description;
+    const options = this.context.parsedArgs.options;
+
+    const usage = `${name} ${version} - ${description} 
    
 USAGE:
   ${Package.name} [OPTIONS] PATHNAME
 
 OPTIONS:
-  -h, --help        Print this help
-  -l, --loglevel    Print:  debug | log (default) | info | warn | error | silent
-  -v, --version     Print version
+  -h, --help        ${options.help.description} 
+  -l, --loglevel    ${options.loglevel.description}
+  -v, --version     ${options.version.description}
 
 `;
     this.context.io.printf(usage);

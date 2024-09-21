@@ -64,10 +64,11 @@ export class Context {
     this.main = argv[1];
     this.args = argv.slice(2);
 
-    // command line args
-    const args = new Args(io);
+    // parsed command line
+    const args = new Args();
     this.parsedArgs = args.parse(this.args);
 
+    // sample path
     this.samplePath = new ParsedPath(args.samplePath);
 
     // log level

@@ -1,6 +1,6 @@
 {
   "name": "mc",
-  "description": "A process runner for samples",
+  "description": "run sample(s) and report exit codes",
   "version": "1.0.0",
   "private": true,
   "author": "Google LLC",

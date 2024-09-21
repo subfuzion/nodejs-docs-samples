@@ -20,6 +20,7 @@ interface KeyValues {
 }
 
 export class ParsedArgs {
+  options: any;
   values: KeyValues;
   positionals: string[];
   toString(): string {
@@ -31,35 +32,35 @@ export class ParsedArgs {
 }
 
 export class Args {
-  private logger: Logger;
-
+  options: any;
   parsedArgs: ParsedArgs;
-
   samplePath: string;
   logLevel: LogLevel;
 
-  constructor(logger: Logger) {
-    this.logger = logger;
-  }
-
-  parse(args: string[]): ParsedArgs {
-    const options = {
+  constructor() {
+    this.options = {
       help: {
         type: 'boolean',
         short: 'h',
+        description: 'Print usage information',
       },
       loglevel: {
         type: 'string',
         default: 'log',
+        description:
+          'Print:  debug | log (default) | info | warn | error | silent',
       },
       version: {
         type: 'boolean',
         short: 'v',
+        description: 'Print current version',
       },
     };
+  }
 
+  parse(args: string[]): ParsedArgs {
+    const options = this.options;
     const parsed = parseArgs({
-      // @ts-ignore
       options,
       args,
       allowPositionals: true,
@@ -68,15 +69,13 @@ export class Args {
 
     const parsedArgs = new ParsedArgs();
     this.parsedArgs = parsedArgs;
-
     const values = Object.fromEntries(Object.entries(parsed.values));
     parsedArgs.values = values;
     const positionals = parsed.positionals;
     parsedArgs.positionals = positionals;
+    parsedArgs.options = options;
 
-    let logLevel = values.loglevel as LogLevel;
-    this.logLevel = logLevel;
-
+    this.logLevel = values.loglevel as LogLevel;
     this.samplePath = positionals[0];
 
     return parsedArgs;
