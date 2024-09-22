@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type Builder} from '../../builder.ts';
+import {type PlanBuilder} from '../../builder.ts';
 import {type Plan} from '../../plan.ts';
 import {SampleSuitePlan} from './plan.ts';
 
-export class SampleSuiteBuilder implements Builder {
+export class SampleSuiteBuilder implements PlanBuilder {
   build(): Plan {
     return new SampleSuitePlan();
   }

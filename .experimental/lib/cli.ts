@@ -15,7 +15,7 @@
 import {accessSync, constants} from 'node:fs';
 import {inspect} from 'node:util';
 
-import {BuilderFactory, BuilderType} from './builder.ts';
+import {PlanBuilderFactory, PlanBuilderType} from './builder.ts';
 import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
@@ -40,7 +40,9 @@ export class Cli {
     this.context.io.debug(inspect(this, false, 100));
     this.validate();
 
-    const plan = BuilderFactory.builder(BuilderType.SampleSuiteBuilder).build();
+    const plan = PlanBuilderFactory.builder(
+      PlanBuilderType.SampleSuiteBuilder
+    ).build();
     await plan.setup(this.context);
     await plan.run(this.context);
     await plan.cleanup(this.context);

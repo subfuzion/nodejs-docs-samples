@@ -17,18 +17,18 @@ import {SampleSuiteBuilder} from './plan/samplesuite/builder.ts';
 
 // TypeScript enum is not supported in strip-only mode. Symbols aren't strictly
 // necessary here, but do make it easier for the caller not to mistake.
-export class BuilderType {
+export class PlanBuilderType {
   static SampleSuiteBuilder = Symbol('SampleSuiteBuilder');
 }
 
-export interface Builder {
+export interface PlanBuilder {
   build(): Plan;
 }
 
-export class BuilderFactory {
-  static builder(builderType: symbol): Builder {
+export class PlanBuilderFactory {
+  static builder(builderType: symbol): PlanBuilder {
     switch (builderType) {
-      case BuilderType.SampleSuiteBuilder:
+      case PlanBuilderType.SampleSuiteBuilder:
         return new SampleSuiteBuilder();
       default:
         throw new Error(`Unsupported builder type: ${String(builderType)}`);
