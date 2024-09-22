@@ -16,10 +16,10 @@ export const LogLevels = [
   /** Verbose debugging information */
   'debug',
 
-  /** Diagnostic log statements */
-  'trace',
+  /** General / diagnostic log statements */
+  'log',
 
-  /** General status information */
+  /** Status information */
   'info',
 
   /** Warning information */
@@ -40,7 +40,6 @@ export interface Logger {
   clear(): void;
   debug(message?: any, ...rest: any[]): void;
   log(message?: any, ...rest: any[]): void;
-  trace(message?: any, ...rest: any[]): void;
   info(message?: any, ...rest: any[]): void;
   warn(message?: string, ...rest: any[]): void;
   error(message?: string, ...rest: any[]): void;

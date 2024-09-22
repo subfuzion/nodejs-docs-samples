@@ -41,16 +41,16 @@ await suite('args', async () => {
     assert.throws(() => args.parse(argv));
   });
 
-  await test('should set loglevel = trace', () => {
-    const argv = ['--loglevel=trace', '.'];
+  await test('should set loglevel = log', () => {
+    const argv = ['--loglevel=log', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'trace');
+    assert.equal(args.logLevel, 'log');
   });
 
   await test('should log', () => {
-    const argv = ['--loglevel=trace', '.'];
+    const argv = ['--loglevel=log', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'trace');
+    assert.equal(args.logLevel, 'log');
 
     mockLogger.logLevel = args.logLevel;
     mockLogger.log('hello');
@@ -58,9 +58,9 @@ await suite('args', async () => {
   });
 
   await test('should not log', () => {
-    const argv = ['--loglevel=trace', '.'];
+    const argv = ['--loglevel=log', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'trace');
+    assert.equal(args.logLevel, 'log');
 
     mockLogger.logLevel = args.logLevel;
     mockLogger.debug('hello');

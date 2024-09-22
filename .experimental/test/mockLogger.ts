@@ -78,11 +78,7 @@ export class MockLogger implements Logger {
   }
 
   log(message?: any, ...rest: any[]): void {
-    this.shouldLog('trace') && this.println(message, ...rest);
-  }
-
-  trace(message?: any, ...rest: any[]): void {
-    this.shouldLog('trace') && this.println(message, ...rest);
+    this.shouldLog('log') && this.println(message, ...rest);
   }
 
   info(message?: any, ...rest: any[]): void {

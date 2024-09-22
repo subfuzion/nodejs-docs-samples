@@ -101,11 +101,7 @@ export class IO implements Logger {
   }
 
   log(message?: any, ...rest: any[]): void {
-    this.shouldLog('trace') && this.console.log(message, ...rest);
-  }
-
-  trace(message?: any, ...rest: any[]): void {
-    this.shouldLog('trace') && this.console.log(message, ...rest);
+    this.shouldLog('log') && this.console.log(message, ...rest);
   }
 
   info(message?: any, ...rest: any[]): void {
