@@ -20,7 +20,7 @@ export class MockLogger implements Logger {
   #stdout: string = '';
   #stderr: string = '';
 
-  constructor(logLevel: LogLevel = 'log') {
+  constructor(logLevel: LogLevel = 'info') {
     this.logLevel = logLevel;
   }
 
@@ -78,7 +78,11 @@ export class MockLogger implements Logger {
   }
 
   log(message?: any, ...rest: any[]): void {
-    this.shouldLog('log') && this.println(message, ...rest);
+    this.shouldLog('trace') && this.println(message, ...rest);
+  }
+
+  trace(message?: any, ...rest: any[]): void {
+    this.shouldLog('trace') && this.println(message, ...rest);
   }
 
   info(message?: any, ...rest: any[]): void {

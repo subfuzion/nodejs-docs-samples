@@ -24,48 +24,50 @@ await suite('args', async () => {
 
   before(() => {
     mockLogger = new MockLogger();
-    args = new Args(mockLogger);
+    args = new Args();
   });
 
   beforeEach(() => {
     mockLogger.clear();
   });
 
-  test('must have at least one argument', {skip: true}, () => {
+  await test.skip('must have at least one argument', () => {
     const argv = [];
     assert.throws(() => args.parse(argv));
   });
 
-  test('must not have more than one argument', {skip: true}, () => {
+  await test.skip('must not have more than one argument', () => {
     const argv = ['.', 'foo'];
     assert.throws(() => args.parse(argv));
   });
 
-  test('should set loglevel = log', () => {
-    const argv = ['--loglevel=log', '.'];
+  await test('should set loglevel = trace', () => {
+    const argv = ['--loglevel=trace', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'log');
+    assert.equal(args.logLevel, 'trace');
   });
 
-  test('should log', () => {
-    const argv = ['--loglevel=log', '.'];
+  await test('should log', () => {
+    const argv = ['--loglevel=trace', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'log');
+    assert.equal(args.logLevel, 'trace');
 
+    mockLogger.logLevel = args.logLevel;
     mockLogger.log('hello');
     assert.ok(mockLogger.stdout.includes('hello'));
   });
 
-  test('should not log', () => {
-    const argv = ['--loglevel=log', '.'];
+  await test('should not log', () => {
+    const argv = ['--loglevel=trace', '.'];
     args.parse(argv);
-    assert.equal(args.logLevel, 'log');
+    assert.equal(args.logLevel, 'trace');
 
+    mockLogger.logLevel = args.logLevel;
     mockLogger.debug('hello');
     assert.ok(!mockLogger.stdout.includes('hello'));
   });
 
-  test('sample path', () => {
+  await test('sample path', () => {
     const argv = ['.'];
     args.parse(argv);
     assert.equal(args.samplePath, '.');
