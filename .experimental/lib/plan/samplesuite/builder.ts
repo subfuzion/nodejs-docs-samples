@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type PlanBuilder} from '../../builder.ts';
-import {type Plan} from '../../plan.ts';
+import {Context} from '#lib/context.ts';
+import {type PlanBuilder} from '#lib/builder.ts';
+import {type Plan} from '#lib/plan.ts';
 import {SampleSuitePlan} from './plan.ts';
 
 export class SampleSuiteBuilder implements PlanBuilder {
-  build(): Plan {
-    return new SampleSuitePlan();
+  async build(context: Context): Promise<Plan> {
+    return new SampleSuitePlan(context);
   }
 }

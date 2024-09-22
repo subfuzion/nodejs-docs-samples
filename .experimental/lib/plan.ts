@@ -15,7 +15,12 @@
 import {Context} from './context.ts';
 
 export interface Plan {
-  setup(context: Context): Promise<void>;
-  run(context: Context): Promise<void>;
-  cleanup(context: Context): Promise<void>;
+  /** Prepare the plan, load/process/parse required resources */
+  prepare(): Promise<void>;
+  /** Perform any setup in preparation to run the plan */
+  setup(): Promise<void>;
+  /** Execute the plan */
+  run(): Promise<void>;
+  /** Teardown - remove plan artifacts intended to be ephemeral */
+  cleanup(): Promise<void>;
 }

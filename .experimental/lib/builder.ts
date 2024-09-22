@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {Context} from '#lib/context.ts';
 import {type Plan} from './plan.ts';
 import {SampleSuiteBuilder} from './plan/samplesuite/builder.ts';
 
@@ -22,7 +23,7 @@ export class PlanBuilderType {
 }
 
 export interface PlanBuilder {
-  build(): Plan;
+  build(context: Context): Promise<Plan>;
 }
 
 export class PlanBuilderFactory {

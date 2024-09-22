@@ -12,6 +12,13 @@
   "bin": {
     "mc": "bin/main.ts"
   },
+  "exports": {
+    "./*": "./lib/*"
+  },
+  "imports": {
+    "#lib/*": "./lib/*",
+    "#test/*": "./test/*"
+  },
   "scripts": {
     "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning ./lib/**/*.test.ts"
   },

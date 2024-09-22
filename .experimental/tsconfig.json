@@ -3,6 +3,7 @@
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "nodenext",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "."
   }
 }

@@ -12,25 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Context} from '../../context.ts';
-import {type Plan} from '../../plan.ts';
+import {Context} from '#lib/context.ts';
+import {type Plan} from '#lib/plan.ts';
 
 export class SampleSuitePlan implements Plan {
-  async setup(context: Context): Promise<void> {
+  context: Context;
+
+  constructor(context: Context) {
+    this.context = context;
+  }
+
+  async prepare(): Promise<void> {
     return new Promise<void>(resolve => {
-      context.io.info('setup');
+      this.context.io.info('prepare');
       resolve();
     });
   }
-  async run(context: Context): Promise<void> {
+  async setup(): Promise<void> {
     return new Promise<void>(resolve => {
-      context.io.info('run');
+      this.context.io.info('setup');
       resolve();
     });
   }
-  async cleanup(context: Context): Promise<void> {
+  async run(): Promise<void> {
     return new Promise<void>(resolve => {
-      context.io.info('cleanup');
+      this.context.io.info('run');
+      resolve();
+    });
+  }
+  async cleanup(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.context.io.info('cleanup');
       resolve();
     });
   }

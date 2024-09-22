@@ -37,15 +37,16 @@ export class Cli {
     if (this.context.parsedArgs.values.version) {
       return this.printVersion();
     }
-    this.context.io.debug(inspect(this, false, 100));
+    this.context.io.log(inspect(this, false, 100));
     this.validate();
 
-    const plan = PlanBuilderFactory.builder(
+    const plan = await PlanBuilderFactory.builder(
       PlanBuilderType.SampleSuiteBuilder
-    ).build();
-    await plan.setup(this.context);
-    await plan.run(this.context);
-    await plan.cleanup(this.context);
+    ).build(this.context);
+    await plan.prepare();
+    await plan.setup();
+    await plan.run();
+    await plan.cleanup();
   }
 
   validate() {

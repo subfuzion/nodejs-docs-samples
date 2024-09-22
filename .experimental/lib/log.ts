@@ -13,21 +13,16 @@
 // limitations under the License.
 
 export const LogLevels = [
-  /** Verbose debugging information */
+  /** Verbose diagnostic logging */
   'debug',
-
-  /** General / diagnostic log statements */
+  /** Basic diagnostic logging / tracing */
   'log',
-
   /** Status information */
   'info',
-
   /** Warning information */
   'warn',
-
   /** Error information */
   'error',
-
   /** No output */
   'silent',
 ] as const;
