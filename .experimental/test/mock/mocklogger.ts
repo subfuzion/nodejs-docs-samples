@@ -52,11 +52,11 @@ export class MockLogger implements Logger {
     this.stdout += format(fmt, ...params);
   }
 
-  println(message?: string, ...rest: any[]): void {
-    if (rest.length > 0) {
-      this.stdout += `${message} ${rest.join(' ')}\n`;
+  println(...params: any[]): void {
+    if (params.length > 0) {
+      this.stdout += `${params.join(' ')}\n`;
     } else {
-      this.stdout += `${message}\n`;
+      this.stdout += `\n`;
     }
   }
 
@@ -95,15 +95,18 @@ export class MockLogger implements Logger {
     }
   }
 
-  ok(message?: string, ...args: any[]): void {
-    this.log(`OK: ${message}`, ...args);
+  ok(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`OK${sep}`, ...params);
   }
 
-  pass(message?: string, ...args: any[]): void {
-    this.log(`PASS: ${message}`, ...args);
+  pass(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`PASS${sep}`, ...params);
   }
 
-  fail(message?: string, ...args: any[]): void {
-    this.log(`FAIL: ${message}`, ...args);
+  fail(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`FAIL:${sep}`, ...params);
   }
 }

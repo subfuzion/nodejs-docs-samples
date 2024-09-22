@@ -85,6 +85,9 @@ export class IO implements Logger {
     this.stdout.write(str);
   }
 
+  /**
+   * Prints format str to stdout (regardless of log level).
+   */
   printf(fmt: string, ...params: any[]): void {
     this.print(format(fmt, ...params));
   }
@@ -92,41 +95,46 @@ export class IO implements Logger {
   /**
    * Prints message to stdout with a newline (regardless of log level).
    */
-  println(message?: any, ...rest: any[]): void {
-    this.console.log(message, ...rest);
+  println(...params: any[]): void {
+    this.console.log(...params);
   }
 
-  debug(message?: any, ...rest: any[]): void {
-    this.shouldLog('debug') && this.console.debug(message, ...rest);
+  debug(message: any, ...params: any[]): void {
+    this.shouldLog('debug') && this.console.debug(message, ...params);
   }
 
-  log(message?: any, ...rest: any[]): void {
-    this.shouldLog('log') && this.console.log(message, ...rest);
+  log(message: any, ...params: any[]): void {
+    this.shouldLog('log') && this.console.log(message, ...params);
   }
 
-  info(message?: any, ...rest: any[]): void {
-    this.shouldLog('info') && this.console.info(`   INFO: ${message}`, ...rest);
+  info(message: any, ...params: any[]): void {
+    this.shouldLog('info') &&
+      this.console.info(`   INFO: ${message}`, ...params);
   }
 
-  warn(message?: string, ...rest: any[]): void {
-    this.shouldLog('warn') && this.console.warn(`⚠️ WARN: ${message}`, ...rest);
+  warn(message: any, ...params: any[]): void {
+    this.shouldLog('warn') &&
+      this.console.warn(`⚠️ WARN: ${message}`, ...params);
   }
 
-  error(message?: string, ...rest: any[]): void {
+  error(message: any, ...params: any[]): void {
     this.shouldLog('error') &&
-      this.console.error(`⛔️ ERROR: ${message}`, ...rest);
+      this.console.error(`⛔️ ERROR: ${message}`, ...params);
   }
 
-  ok(message?: string, ...args: any[]): void {
-    this.println(`👍 OK: ${message}`, ...args);
+  ok(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`👍 OK${sep}`, ...params);
   }
 
-  pass(message?: string, ...args: any[]): void {
-    this.println(`✅ PASS: ${message}`, ...args);
+  pass(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`✅ PASS${sep}`, ...params);
   }
 
-  fail(message?: string, ...args: any[]): void {
-    this.println(`❌ FAIL: ${message}`, ...args);
+  fail(...params: any[]): void {
+    const sep = params.length ? ':' : '';
+    this.println(`❌ FAIL:${sep}`, ...params);
   }
 
   static defaultIO(logLevel?: LogLevel): IO {

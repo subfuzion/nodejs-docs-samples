@@ -44,9 +44,10 @@ export class SampleSuitePlan implements Plan {
     });
   }
   async cleanup(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve, reject) => {
       this.context.io.info('cleanup plan');
-      this.context.io.fail('cleanup plan');
+      // this.context.io.fail('cleanup plan');
+      // return reject(new Error('cleanup plan failed'));
       resolve();
     });
   }
