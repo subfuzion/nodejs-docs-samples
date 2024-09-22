@@ -15,6 +15,7 @@
 import {accessSync, constants} from 'node:fs';
 import {inspect} from 'node:util';
 
+import {BuilderFactory, BuilderType} from './builder.ts';
 import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
@@ -29,7 +30,7 @@ export class Cli {
     this.context = new Context(argv, config, IO.defaultIO());
   }
 
-  run() {
+  async run() {
     if (this.context.parsedArgs.values.help) {
       return this.printUsage();
     }
@@ -38,6 +39,9 @@ export class Cli {
     }
     this.context.io.debug(inspect(this, false, 100));
     this.validate();
+
+    const plan = BuilderFactory.builder(BuilderType.SampleSuiteBuilder).build();
+    await plan.run();
   }
 
   validate() {
@@ -74,9 +78,9 @@ USAGE:
   ${Package.name} [OPTIONS] PATHNAME
 
 OPTIONS:
-  -h, --help        ${options.help.description} 
-  -l, --loglevel    ${options.loglevel.description}
-  -v, --version     ${options.version.description}
+  -h, --help         ${options.help.description} 
+  -l, --loglevel     ${options.loglevel.description}
+  -v, --version      ${options.version.description}
 
 `;
     this.context.io.printf(usage);
@@ -86,9 +90,9 @@ OPTIONS:
     this.context.io.println(Package.version);
   }
 
-  static run(argv: string[]) {
+  static async run(argv: string[]) {
     const cli = new Cli(argv);
-    cli.run();
+    await cli.run();
   }
 }
 

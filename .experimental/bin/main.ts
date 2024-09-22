@@ -19,7 +19,7 @@ import {Cli} from '../lib/cli.ts';
 import {IO} from '../lib/io.ts';
 
 try {
-  Cli.run(argv);
+  await Cli.run(argv);
 } catch (err) {
   // ALL lib exceptions surface here.
   IO.abort(err);

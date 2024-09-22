@@ -11,3 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+export interface Plan {
+  run(): Promise<void>;
+}
+
+export class PlanFactory {
+  static plan(): Plan {
+    return new SampleSuitePlan();
+  }
+}
+
+class SampleSuitePlan implements Plan {
+  async run(): Promise<void> {
+    return new Promise<void>(resolve => {
+      console.log('Running Plan');
+      resolve();
+    });
+  }
+}

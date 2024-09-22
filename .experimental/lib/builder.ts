@@ -11,3 +11,32 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+import {type Plan, PlanFactory} from './plan.ts';
+
+// TypeScript enum is not supported in strip-only mode. Symbols aren't strictly
+// necessary here, but do make it easier for the caller not to mistake.
+export class BuilderType {
+  static SampleSuiteBuilder = Symbol('SampleSuiteBuilder');
+}
+
+export interface Builder {
+  build(): Plan;
+}
+
+export class BuilderFactory {
+  static builder(builderType: symbol): Builder {
+    switch (builderType) {
+      case BuilderType.SampleSuiteBuilder:
+        return new SampleSuiteBuilder();
+      default:
+        throw new Error(`Unsupported builder type: ${String(builderType)}`);
+    }
+  }
+}
+
+class SampleSuiteBuilder implements Builder {
+  build(): Plan {
+    return PlanFactory.plan();
+  }
+}
