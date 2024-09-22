@@ -105,7 +105,7 @@ export class IO implements Logger {
   }
 
   info(message?: any, ...rest: any[]): void {
-    this.shouldLog('info') && this.console.info(`✔️ INFO: ${message}`, ...rest);
+    this.shouldLog('info') && this.console.info(`   INFO: ${message}`, ...rest);
   }
 
   warn(message?: string, ...rest: any[]): void {
@@ -118,15 +118,15 @@ export class IO implements Logger {
   }
 
   ok(message?: string, ...args: any[]): void {
-    this.log(`✔ OK: ${message}`, ...args);
+    this.println(`👍 OK: ${message}`, ...args);
   }
 
   pass(message?: string, ...args: any[]): void {
-    this.log(`✅ PASS: ${message}`, ...args);
+    this.println(`✅ PASS: ${message}`, ...args);
   }
 
   fail(message?: string, ...args: any[]): void {
-    this.log(`❌ FAIL: ${message}`, ...args);
+    this.println(`❌ FAIL: ${message}`, ...args);
   }
 
   static defaultIO(logLevel?: LogLevel): IO {

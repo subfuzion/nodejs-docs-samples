@@ -24,25 +24,29 @@ export class SampleSuitePlan implements Plan {
 
   async prepare(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.context.io.info('prepare');
+      this.context.io.info('prepare plan');
+      this.context.io.ok('prepare plan');
       resolve();
     });
   }
   async setup(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.context.io.info('setup');
+      this.context.io.info('setup plan');
+      this.context.io.ok('setup plan');
       resolve();
     });
   }
   async run(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.context.io.info('run');
+      this.context.io.info('run plan');
+      this.context.io.ok('run plan');
       resolve();
     });
   }
   async cleanup(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.context.io.info('cleanup');
+      this.context.io.info('cleanup plan');
+      this.context.io.fail('cleanup plan');
       resolve();
     });
   }
