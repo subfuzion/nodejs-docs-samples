@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Context} from './context.ts';
+import {type Builder} from '../../builder.ts';
+import {type Plan} from '../../plan.ts';
+import {SampleSuitePlan} from './plan.ts';
 
-export interface Plan {
-  setup(context: Context): Promise<void>;
-  run(context: Context): Promise<void>;
-  cleanup(context: Context): Promise<void>;
+export class SampleSuiteBuilder implements Builder {
+  build(): Plan {
+    return new SampleSuitePlan();
+  }
 }

@@ -41,7 +41,9 @@ export class Cli {
     this.validate();
 
     const plan = BuilderFactory.builder(BuilderType.SampleSuiteBuilder).build();
+    await plan.setup(this.context);
     await plan.run(this.context);
+    await plan.cleanup(this.context);
   }
 
   validate() {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type Logger, type LogLevel, LogLevels} from '../lib/log.ts';
+import {type Logger, type LogLevel, LogLevels} from '../../lib/log.ts';
 import {format} from 'node:util';
 
 export class MockLogger implements Logger {

@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type Plan, PlanFactory} from './plan.ts';
+import {type Plan} from './plan.ts';
+import {SampleSuiteBuilder} from './plan/samplesuite/builder.ts';
 
 // TypeScript enum is not supported in strip-only mode. Symbols aren't strictly
 // necessary here, but do make it easier for the caller not to mistake.
@@ -32,11 +33,5 @@ export class BuilderFactory {
       default:
         throw new Error(`Unsupported builder type: ${String(builderType)}`);
     }
-  }
-}
-
-class SampleSuiteBuilder implements Builder {
-  build(): Plan {
-    return PlanFactory.plan();
   }
 }
