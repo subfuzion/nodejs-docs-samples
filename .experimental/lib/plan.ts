@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {Context} from './context.ts';
+
 export interface Plan {
-  run(): Promise<void>;
+  run(context: Context): Promise<void>;
 }
 
 export class PlanFactory {
@@ -23,9 +25,9 @@ export class PlanFactory {
 }
 
 class SampleSuitePlan implements Plan {
-  async run(): Promise<void> {
+  async run(context: Context): Promise<void> {
     return new Promise<void>(resolve => {
-      console.log('Running Plan');
+      context.io.info('Running Plan');
       resolve();
     });
   }

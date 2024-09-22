@@ -47,8 +47,7 @@ export class Args {
       loglevel: {
         type: 'string',
         default: 'log',
-        description:
-          'Print:  debug | log (default) | info | warn | error | silent',
+        description: 'Print:  debug | log * | info | warn | error | silent',
       },
       version: {
         type: 'boolean',

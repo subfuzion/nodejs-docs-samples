@@ -41,7 +41,7 @@ export class Cli {
     this.validate();
 
     const plan = BuilderFactory.builder(BuilderType.SampleSuiteBuilder).build();
-    await plan.run();
+    await plan.run(this.context);
   }
 
   validate() {
@@ -51,7 +51,7 @@ export class Cli {
     }
     if (!context.parsedArgs.positionals.length) {
       this.printUsage();
-      throw new Error('not enough arguments (expected one)');
+      throw new Error('missing argument PATHNAME');
     }
     if (context.parsedArgs.positionals.length > 1) {
       throw new Error(
@@ -76,6 +76,8 @@ export class Cli {
    
 USAGE:
   ${Package.name} [OPTIONS] PATHNAME
+
+  PATHNAME           Path to a sample or sample directory 
 
 OPTIONS:
   -h, --help         ${options.help.description} 
