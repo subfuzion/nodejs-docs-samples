@@ -1,0 +1,36 @@
+{
+  "root": true,
+  "builder": "SampleSuiteBuilder",
+  "stage": {
+    "prepare": {
+      "timeout": "5m",
+      "retry": 3,
+      "steps": [
+        {
+          "name": "prepare step 1",
+          "command": "echo prepare step 1"
+        },
+        {
+          "name": "prepare step 2",
+          "command": "echo prepare step 2"
+        }
+      ]
+    },
+    "setup": {
+      "timeout": "5m",
+      "retry": 3,
+      "steps": [
+        {
+          "name": "setup step 1",
+          "command": "echo setup step 1",
+          "retry": 3
+        },
+        {
+          "name": "verify setup step 2",
+          "command": "echo setup step 2",
+          "retry": 3
+        }
+      ]
+    }
+  }
+}
