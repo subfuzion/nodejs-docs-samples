@@ -87,12 +87,14 @@ export class SampleSuitePlan implements Plan {
         //result.executeStatus = 'succeeded';
       } catch (error) {
         result.executeErrors.push(error);
-        this.context.io.error(error);
+        this.context.io.error(error.message);
       }
     }
 
     try {
       result.cleanupStatus = 'started';
+      this.context.io.pass('cool');
+      this.context.io.fail('dang');
       await this.cleanup();
       result.cleanupStatus = 'succeeded';
     } catch (error) {

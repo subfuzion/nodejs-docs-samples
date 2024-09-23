@@ -27,6 +27,20 @@ const DefaultStdin: StdinType = process.stdin;
 const DefaultStdout: StdoutType = process.stdout;
 const DefaultStderr: StderrType = process.stderr;
 
+class Prefix {
+  static readonly info: [string, string] = ['     |', '[ info ]'];
+  static readonly warn: [string, string] = [' wrn |', '[ warn ]'];
+  static readonly error: [string, string] = [' err |', '[ ERR! ]'];
+  static readonly ok: [string, string] = [' ok  |', '[ ok   ]'];
+  static readonly pass: [string, string] = [' 🟢  |', '[ pass ]'];
+  static readonly fail: [string, string] = [' 🔴  |', '[ FAIL ]'];
+  static readonly abort: [string, string] = [' 🚫  ', '[ ABRT ]'];
+
+  static get(prefix: [string, string]): string {
+    return process.stdout.isTTY ? prefix[0] : prefix[1];
+  }
+}
+
 export class IO implements Logger {
   logLevel: LogLevel;
   readonly #console: Console;
@@ -96,7 +110,8 @@ export class IO implements Logger {
    * Prints message to stdout with a newline (regardless of log level).
    */
   println(...params: any[]): void {
-    this.console.log(...params);
+    const str = params.length > 0 ? params.map(p => String(p)).join(' ') : '';
+    this.print(`${str}\n`);
   }
 
   debug(message: any, ...params: any[]): void {
@@ -109,32 +124,32 @@ export class IO implements Logger {
 
   info(message: any, ...params: any[]): void {
     this.shouldLog('info') &&
-      this.console.info(`ℹ️ INFO: ${message}`, ...params);
+      this.console.info(`${Prefix.get(Prefix.info)} ${message}`, ...params);
   }
 
   warn(message: any, ...params: any[]): void {
     this.shouldLog('warn') &&
-      this.console.warn(`⚠️ WARN: ${message}`, ...params);
+      this.console.warn(`${Prefix.get(Prefix.warn)} ${message}`, ...params);
   }
 
   error(message: any, ...params: any[]): void {
     this.shouldLog('error') &&
-      this.console.error(`⛔️ ERROR: ${message}`, ...params);
+      this.console.error(`${Prefix.get(Prefix.error)} ${message}`, ...params);
   }
 
   ok(...params: any[]): void {
     const sep = params.length ? ':' : '';
-    this.println(`👍 OK${sep}`, ...params);
+    this.println(Prefix.get(Prefix.ok), ...params);
   }
 
   pass(...params: any[]): void {
     const sep = params.length ? ':' : '';
-    this.println(`✅ PASS${sep}`, ...params);
+    this.println(Prefix.get(Prefix.pass), ...params);
   }
 
   fail(...params: any[]): void {
     const sep = params.length ? ':' : '';
-    this.println(`❌ FAIL:${sep}`, ...params);
+    this.println(Prefix.get(Prefix.fail), ...params);
   }
 
   static defaultIO(logLevel?: LogLevel): IO {
