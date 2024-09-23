@@ -43,39 +43,7 @@ export class Cli {
     const plan = await PlanBuilderFactory.builder(
       PlanBuilderType.SampleSuiteBuilder
     ).build(this.context);
-
-    await plan.prepare();
-
-    let failures = false;
-
-    try {
-      await plan.setup();
-    } catch (error) {
-      failures = true;
-      this.context.io.error(error);
-    }
-
-    if (!failures) {
-      try {
-        await plan.run();
-      } catch (error) {
-        failures = true;
-        this.context.io.error(error);
-      }
-    }
-
-    try {
-      await plan.cleanup();
-    } catch (error) {
-      failures = true;
-      this.context.io.error(error);
-    }
-
-    if (failures) {
-      this.context.io.fail('there were failures');
-    } else {
-      this.context.io.pass();
-    }
+    let results = await plan.run();
   }
 
   validate() {

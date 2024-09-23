@@ -109,7 +109,7 @@ export class IO implements Logger {
 
   info(message: any, ...params: any[]): void {
     this.shouldLog('info') &&
-      this.console.info(`   INFO: ${message}`, ...params);
+      this.console.info(`ℹ️ INFO: ${message}`, ...params);
   }
 
   warn(message: any, ...params: any[]): void {

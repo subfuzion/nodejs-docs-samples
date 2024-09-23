@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Context} from '#lib/context.ts';
-import {type Plan} from '#lib/plan.ts';
+import {type Plan, type PlanCallback, PlanRunResults} from '#lib/plan.ts';
 
 export class SampleSuitePlan implements Plan {
   context: Context;
@@ -36,7 +36,7 @@ export class SampleSuitePlan implements Plan {
       resolve();
     });
   }
-  async run(): Promise<void> {
+  async execute(): Promise<void> {
     return new Promise<void>(resolve => {
       this.context.io.info('run plan');
       this.context.io.ok('run plan');
@@ -46,9 +46,60 @@ export class SampleSuitePlan implements Plan {
   async cleanup(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.context.io.info('cleanup plan');
-      // this.context.io.fail('cleanup plan');
-      // return reject(new Error('cleanup plan failed'));
       resolve();
     });
+  }
+
+  async run(
+    prepare?: PlanCallback,
+    setup?: PlanCallback,
+    execute?: PlanCallback,
+    cleanup?: PlanCallback
+  ): Promise<PlanRunResults> {
+    const result = new PlanRunResults();
+
+    try {
+      result.prepareStatus = 'started';
+      await this.prepare();
+      result.prepareStatus = 'succeeded';
+    } catch (error) {
+      result.prepareErrors.push(error);
+      // If prepare fails, stop.
+      return result;
+    }
+
+    try {
+      result.setupStatus = 'started';
+      await this.setup();
+      result.setupStatus = 'succeeded';
+    } catch (error) {
+      result.setupErrors.push(error);
+      this.context.io.error(error);
+    }
+
+    if (result.setupStatus !== 'succeeded') {
+      result.executeStatus = 'skipped';
+    } else {
+      try {
+        result.executeStatus = 'started';
+        await this.execute();
+        throw new Error('run failed');
+        //result.executeStatus = 'succeeded';
+      } catch (error) {
+        result.executeErrors.push(error);
+        this.context.io.error(error);
+      }
+    }
+
+    try {
+      result.cleanupStatus = 'started';
+      await this.cleanup();
+      result.cleanupStatus = 'succeeded';
+    } catch (error) {
+      result.cleanupErrors.push(error);
+      this.context.io.error(error);
+    }
+
+    return result;
   }
 }
