@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Package from '../package.json' with {type: 'json'};
-export default Package;
+import pkg from '../package.json' with {type: 'json'};
+export default pkg;

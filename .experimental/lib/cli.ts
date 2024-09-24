@@ -20,7 +20,7 @@ import {Config} from './config.ts';
 import {Context} from './context.ts';
 import {IO} from './io.ts';
 import {LogLevels} from './log.ts';
-import Package from './Package.ts';
+import pkg from './package.ts';
 
 export class Cli {
   context: Context;
@@ -69,15 +69,15 @@ export class Cli {
 
   printUsage(): void {
     if (!process.stdout.isTTY) return;
-    const name = Package.name;
-    const version = Package.version;
-    const description = Package.description;
+    const name = pkg.name;
+    const version = pkg.version;
+    const description = pkg.description;
     const options = this.context.parsedArgs.options;
 
     const usage = `${name} ${version} - ${description} 
    
 USAGE:
-  ${Package.name} [OPTIONS] PATHNAME
+  ${pkg.name} [OPTIONS] PATHNAME
 
   PATHNAME           Path to a sample or sample directory 
 
@@ -91,7 +91,7 @@ OPTIONS:
   }
 
   printVersion(): void {
-    this.context.io.println(Package.version);
+    this.context.io.println(pkg.version);
   }
 
   static async run(argv: string[]) {
