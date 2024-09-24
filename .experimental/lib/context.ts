@@ -15,9 +15,9 @@
 import {statSync} from 'node:fs';
 import {normalize, parse, resolve} from 'node:path';
 
-import {Config} from './config.ts';
+import {Args, type ParsedArgs} from './args.ts';
+import type {Config} from './config.ts';
 import {IO} from './io.ts';
-import {Args, ParsedArgs} from './args.ts';
 
 class ParsedPath {
   original: string;
@@ -32,7 +32,7 @@ class ParsedPath {
   constructor(original?: string) {
     this.original = original || '.';
     this.normalized = normalize(this.original);
-    let p = this.normalized;
+    const p = this.normalized;
     this.isDirectory = isDirectory(p);
     this.full = resolve(p);
     const {dir, base, name, ext} = parse(p);

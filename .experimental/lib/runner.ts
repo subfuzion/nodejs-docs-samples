@@ -14,8 +14,8 @@
 
 import {
   DefaultCommand,
-  ExecCommandCallback,
-  ExecCommandOptions,
+  type ExecCommandCallback,
+  type ExecCommandOptions,
 } from './exec.ts';
 
 type VisitorCallback = (node: SampleNode) => void;
@@ -42,7 +42,7 @@ class SampleNode {
     cmd?: string | string[],
     args?: string[] | ExecCommandOptions,
     options?: ExecCommandOptions | ExecCommandCallback,
-    cb?: ExecCommandCallback
+    cb?: ExecCommandCallback,
   ) {
     // The cmd is optional, If the first argument looks like the args array,
     // reassign args to parameters on the right and then assign the default cmd.
@@ -68,10 +68,10 @@ class SampleNode {
    */
   visit(cb: VisitorCallback, options?: VisitorCallbackOptions) {
     const _visit = (node: SampleNode, cb: VisitorCallback) => {
-      if (options && options.skip && node.skip) return;
+      if (options?.skip && node.skip) return;
       cb(node);
       if (node.children) {
-        node.children.forEach(child => _visit(child, cb));
+        node.children.forEach((child) => _visit(child, cb));
       }
     };
     _visit(this, cb);

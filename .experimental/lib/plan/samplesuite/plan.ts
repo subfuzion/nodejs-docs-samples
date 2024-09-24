@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Context} from '#lib/context.ts';
+import type {Context} from '#lib/context.ts';
 import {type Plan, type PlanCallback, PlanRunResults} from '#lib/plan.ts';
 
 export class SampleSuitePlan implements Plan {
@@ -23,21 +23,21 @@ export class SampleSuitePlan implements Plan {
   }
 
   async prepare(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       this.context.io.info('prepare plan');
       this.context.io.ok('prepare plan');
       resolve();
     });
   }
   async setup(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       this.context.io.info('setup plan');
       this.context.io.ok('setup plan');
       resolve();
     });
   }
   async execute(): Promise<void> {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       this.context.io.info('run plan');
       this.context.io.ok('run plan');
       resolve();
@@ -54,7 +54,7 @@ export class SampleSuitePlan implements Plan {
     prepare?: PlanCallback,
     setup?: PlanCallback,
     execute?: PlanCallback,
-    cleanup?: PlanCallback
+    cleanup?: PlanCallback,
   ): Promise<PlanRunResults> {
     const result = new PlanRunResults();
 

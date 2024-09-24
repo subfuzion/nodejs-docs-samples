@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {accessSync, constants} from 'node:fs';
+import {constants, accessSync} from 'node:fs';
 import {inspect} from 'node:util';
 
 import {PlanBuilderFactory, PlanBuilderType} from './builder.ts';
@@ -41,9 +41,9 @@ export class Cli {
     this.validate();
 
     const plan = await PlanBuilderFactory.builder(
-      PlanBuilderType.SampleSuiteBuilder
+      PlanBuilderType.SampleSuiteBuilder,
     ).build(this.context);
-    let results = await plan.run();
+    const results = await plan.run();
   }
 
   validate() {
@@ -57,12 +57,12 @@ export class Cli {
     }
     if (context.parsedArgs.positionals.length > 1) {
       throw new Error(
-        `too many arguments (expected one): ${context.parsedArgs.positionals}`
+        `too many arguments (expected one): ${context.parsedArgs.positionals}`,
       );
     }
     if (!isAccessible(this.context.samplePath.normalized)) {
       throw new Error(
-        `can't access path "${this.context.samplePath.normalized}"`
+        `can't access path "${this.context.samplePath.normalized}"`,
       );
     }
   }

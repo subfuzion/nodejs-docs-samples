@@ -13,13 +13,14 @@
 // limitations under the License.
 
 import {format} from 'node:util';
-import {type Logger, type LogLevel, LogLevels} from './log.ts';
+
+import {type LogLevel, LogLevels, type Logger} from './log.ts';
 
 // export type StdinType = NodeJS.ReadStream & {fd: 0};
-// export type StdoutType = NodeJS.WriteStream & {fd: 1};
-// export type StderrType = NodeJS.WriteStream & {fd: 2};
 export type StdinType = NodeJS.ReadStream;
+// export type StdoutType = NodeJS.WriteStream & {fd: 1};
 export type StdoutType = NodeJS.WriteStream;
+// export type StderrType = NodeJS.WriteStream & {fd: 2};
 export type StderrType = NodeJS.WriteStream;
 
 const DefaultConsole = console;

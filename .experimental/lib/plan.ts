@@ -62,6 +62,6 @@ export interface Plan {
     prepare?: PlanCallback,
     setup?: PlanCallback,
     execute?: PlanCallback,
-    cleanup?: PlanCallback
+    cleanup?: PlanCallback,
   ): Promise<PlanRunResults>;
 }

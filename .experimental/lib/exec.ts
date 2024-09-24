@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {ChildProcess, spawn, spawnSync} from 'node:child_process';
+import {type ChildProcess, spawn, spawnSync} from 'node:child_process';
 
 export const DefaultCommand = 'node';
 
@@ -53,7 +53,7 @@ export function exec(
   cmd: string | string[],
   args?: string[] | ExecCommandOptions | ExecCommandCallback,
   options?: ExecCommandOptions | ExecCommandCallback,
-  cb?: ExecCommandCallback
+  cb?: ExecCommandCallback,
 ): ExecCommandResult | ChildProcess | undefined {
   // cmd, options, and cb are optional. Shift args to match parameters.
   // It can take up to 3 shifts to get all 4 args matched to parameters.
@@ -75,7 +75,7 @@ export function exec(
 
   let command = cmd;
   if (Array.isArray(args) && args.length > 0) {
-    command += ' ' + args.join(' ').trim();
+    command += ` ${args.join(' ').trim()}`;
   }
 
   let resultObject: ExecCommandResult;
@@ -148,27 +148,26 @@ export function exec(
       cb(resultObject);
     }
     return child;
-  } else {
-    /* no callback */
-    try {
-      // @ts-ignore
-      const result = spawnSync(cmd, args, options);
-      resultObject = {
-        error: undefined,
-        command: command,
-        exitCode: result.status,
-        stdout: result.stdout.toString().trim(),
-        stderr: result.stderr.toString().trim(),
-      };
-    } catch (err) {
-      resultObject = {
-        error: err,
-        command: command,
-        exitCode: -1,
-        stdout: '',
-        stderr: '',
-      };
-    }
-    return resultObject;
   }
+  /* no callback */
+  try {
+    // @ts-ignore
+    const result = spawnSync(cmd, args, options);
+    resultObject = {
+      error: undefined,
+      command: command,
+      exitCode: result.status,
+      stdout: result.stdout.toString().trim(),
+      stderr: result.stderr.toString().trim(),
+    };
+  } catch (err) {
+    resultObject = {
+      error: err,
+      command: command,
+      exitCode: -1,
+      stdout: '',
+      stderr: '',
+    };
+  }
+  return resultObject;
 }

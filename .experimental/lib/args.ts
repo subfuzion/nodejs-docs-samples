@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {inspect, parseArgs} from 'node:util';
-import {type Logger, type LogLevel} from './log.ts';
+import type {LogLevel} from './log.ts';
 
 interface KeyValues {
   [key: string]: string | boolean | number | (string | boolean | number)[];

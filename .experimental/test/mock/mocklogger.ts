@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type Logger, type LogLevel, LogLevels} from '../../lib/log.ts';
 import {format} from 'node:util';
+import {type LogLevel, LogLevels, type Logger} from '#lib/log.ts';
 
 export class MockLogger implements Logger {
   logLevel: LogLevel;
-  #stdout: string = '';
-  #stderr: string = '';
+  #stdout = '';
+  #stderr = '';
 
   constructor(logLevel: LogLevel = 'info') {
     this.logLevel = logLevel;
@@ -56,7 +56,7 @@ export class MockLogger implements Logger {
     if (params.length > 0) {
       this.stdout += `${params.join(' ')}\n`;
     } else {
-      this.stdout += `\n`;
+      this.stdout += '\n';
     }
   }
 

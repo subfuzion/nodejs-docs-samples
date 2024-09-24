@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Context} from '#lib/context.ts';
-import {type PlanBuilder} from '#lib/builder.ts';
-import {type Plan} from '#lib/plan.ts';
+import type {PlanBuilder} from '#lib/builder.ts';
+import type {Context} from '#lib/context.ts';
+import type {Plan} from '#lib/plan.ts';
 import {SampleSuitePlan} from './plan.ts';
 
 export class SampleSuiteBuilder implements PlanBuilder {

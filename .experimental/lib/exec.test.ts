@@ -15,7 +15,7 @@
 import assert from 'node:assert/strict';
 import test, {suite} from 'node:test';
 
-import {exec, type ExecCommandResult} from './exec.ts';
+import {type ExecCommandResult, exec} from './exec.ts';
 
 await suite('exec', async () => {
   test('exec sync "node --version" should pass', () => {
@@ -33,7 +33,7 @@ await suite('exec', async () => {
   });
 
   test('exec async "node --version" should pass', (_, done) => {
-    exec(['--version'], result => {
+    exec(['--version'], (result) => {
       assert.equal(result.command, 'node --version');
       assert.equal(result.exitCode, 0);
       assert.ok(result.stdout.startsWith('v'));
@@ -42,7 +42,7 @@ await suite('exec', async () => {
   });
 
   test('exec async "node --foo" should fail', (_, done) => {
-    exec(['--foo'], result => {
+    exec(['--foo'], (result) => {
       assert.equal(result.command, 'node --foo');
       assert.notEqual(result.exitCode, 0);
       assert.ok(result.stderr.includes('bad option'));
@@ -51,7 +51,7 @@ await suite('exec', async () => {
   });
 
   test('exec async command "true" should pass', (_, done) => {
-    exec('true', result => {
+    exec('true', (result) => {
       assert.equal(result.command, 'true');
       assert.equal(result.exitCode, 0);
       done();
@@ -59,7 +59,7 @@ await suite('exec', async () => {
   });
 
   test('exec async command "false" should fail', (_, done) => {
-    exec('false', result => {
+    exec('false', (result) => {
       assert.equal(result.command, 'false');
       assert.notEqual(result.exitCode, 0);
       done();
@@ -67,7 +67,7 @@ await suite('exec', async () => {
   });
 
   test('exec async non-existing command "foo" should fail', (_, done) => {
-    exec('foo', result => {
+    exec('foo', (result) => {
       assert.equal(result.command, 'foo');
       assert.notEqual(result.exitCode, 0);
       // NOTE: because the command failed to run (because it doesn't exist), it

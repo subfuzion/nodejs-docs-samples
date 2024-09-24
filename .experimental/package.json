@@ -18,7 +18,8 @@
   },
   "scripts": {
     "test": "node --test --experimental-strip-types --disable-warning=ExperimentalWarning ./lib/**/*.test.ts",
-    "check": "biome format --write && tsc"
+    "lint": "biome check && tsc",
+    "fix": "biome check --write && tsc"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
